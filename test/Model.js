@@ -28,6 +28,7 @@ const assertReacts = (instance, field, done, modify) => {
 }
 
 describe('Model', () => {
+  
   it('should set properties as observable', () => {
     const instance = new MobxModel.Model({name: 'foo'})
     assert(isObservable(instance, 'name'))
