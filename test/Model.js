@@ -10,9 +10,11 @@ describe('Model', () => {
   })
 
   it('should camelize properties', () => {
-    MobxModel.config.shouldCamelize = true
+    class Test extends MobxModel.Model {}
+    Test.camelize = true
     
-    const instance = new MobxModel.Model()
+    const instance = new Test()
+    
     instance.init({test_value: 'foo'})
     assert.equal('foo', instance.testValue)
     assert(isObservable(instance, 'testValue'))

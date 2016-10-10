@@ -1,10 +1,13 @@
 import { observable, toJS, extendObservable } from 'mobx'
 import { camelize } from './helpers'
-import config from './config'
 
 let globalOid = 0
 
 export default class Model {
+  static nestedStores = {}
+  static fields = []
+  static camelize = false
+  
   id
   _oid = null
   _loaded = observable(false)
@@ -26,7 +29,7 @@ export default class Model {
   }
 
   init(data) {
-    if (config.shouldCamelize) {
+    if (this.constructor.camelize) {
       data = camelize(data)
     }
     
@@ -37,8 +40,8 @@ export default class Model {
     }
 
     Object.keys(data).forEach(key => {
-      if (config.mapNameToStore[key]) {
-        const store = config.mapNameToStore[key]
+      if (this.constructor.nestedStores[key]) {
+        const store = this.constructor.nestedStores[key]
 
         if (isArray(data[key])) {
           const newArr = []
@@ -51,12 +54,16 @@ export default class Model {
         }
       }
     })
+    
+    this.constructor.fields.forEach(field => {
+      if (!data[field]) data[field] = null
+    })
 
     extendObservable(this, data)
   }
 
   assign(data) {
-    if (config.shouldCamelize) {
+    if (this.constructor.camelize) {
       data = camelize(data)
     }
     

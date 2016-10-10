@@ -28,14 +28,13 @@ var Store = function () {
     _classCallCheck(this, Store);
 
     this.objects = (0, _mobx.observable)([]);
-    this.object = _Model2.default;
-
-    if (!object) {
-      throw Error.new("Store must be initialized with a Model class");
-    }
 
     // the object is a constructor function used to provide new instances.
-    this.object = object;
+    if (object) {
+      this.object = object;
+    } else {
+      this.object = _Model2.default;
+    }
 
     // initialize this in the global State object, this contains all objects
     State[object.name] = this;

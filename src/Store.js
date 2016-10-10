@@ -9,16 +9,16 @@ export const State = {
 
 export default class Store {
   objects = observable([])
-  object = Model
+  object
 
   constructor(object) {
-    if (!object) {
-      throw Error.new("Store must be initialized with a Model class")
-    }
-
     // the object is a constructor function used to provide new instances.
-    this.object = object
-
+    if (object) {
+      this.object = object 
+    } else {
+      this.object = Model
+    }
+    
     // initialize this in the global State object, this contains all objects
     State[object.name] = this
   }

@@ -10,12 +10,6 @@ var _mobx = require('mobx');
 
 var _helpers = require('./helpers');
 
-var _config = require('./config');
-
-var _config2 = _interopRequireDefault(_config);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var globalOid = 0;
@@ -41,7 +35,9 @@ var Model = function () {
   }, {
     key: 'init',
     value: function init(data) {
-      if (_config2.default.shouldCamelize) {
+      var _this = this;
+
+      if (this.constructor.camelize) {
         data = (0, _helpers.camelize)(data);
       }
 
@@ -52,9 +48,9 @@ var Model = function () {
       }
 
       Object.keys(data).forEach(function (key) {
-        if (_config2.default.mapNameToStore[key]) {
+        if (_this.constructor.nestedStores[key]) {
           (function () {
-            var store = _config2.default.mapNameToStore[key];
+            var store = _this.constructor.nestedStores[key];
 
             if (isArray(data[key])) {
               (function () {
@@ -71,26 +67,30 @@ var Model = function () {
         }
       });
 
+      this.constructor.fields.forEach(function (field) {
+        if (!data[field]) data[field] = null;
+      });
+
       (0, _mobx.extendObservable)(this, data);
     }
   }, {
     key: 'assign',
     value: function assign(data) {
-      var _this = this;
+      var _this2 = this;
 
-      if (_config2.default.shouldCamelize) {
+      if (this.constructor.camelize) {
         data = (0, _helpers.camelize)(data);
       }
 
       Object.keys(data).forEach(function (param) {
-        if (_this[param] && _this[param].constructor.name === 'ObservableArray') {
-          _this[param].replace(data[param]);
-        } else if (_this[param] && _this[param].constructor.name === 'Object') {
+        if (_this2[param] && _this2[param].constructor.name === 'ObservableArray') {
+          _this2[param].replace(data[param]);
+        } else if (_this2[param] && _this2[param].constructor.name === 'Object') {
           Object.keys(data[param]).forEach(function (key) {
-            return _this[param][key] = data[param][key];
+            return _this2[param][key] = data[param][key];
           });
         } else {
-          _this[param] = data[param];
+          _this2[param] = data[param];
         }
       });
     }
@@ -117,11 +117,11 @@ var Model = function () {
   }, {
     key: 'load',
     value: function load() {
-      var _this2 = this;
+      var _this3 = this;
 
       return this.retrieve().then(function (data) {
-        _this2.assign(data);
-        _this2.setLoaded();
+        _this3.assign(data);
+        _this3.setLoaded();
       });
     }
   }, {
@@ -158,6 +158,9 @@ var Model = function () {
   return Model;
 }();
 
+Model.nestedStores = {};
+Model.fields = [];
+Model.camelize = false;
 exports.default = Model;
 
 
