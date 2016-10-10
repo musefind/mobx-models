@@ -88,7 +88,7 @@ var Collection = function () {
           _this.setLoaded();
           resolve(_this._results);
         }).catch(function (err) {
-          console.warn("error while loading query", err);
+          console.warn("Error while loading query", err);
           reject(err);
         });
       });

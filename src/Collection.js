@@ -81,7 +81,7 @@ export default class Collection {
           resolve(this._results)
         })
         .catch((err) => {
-          console.warn("error while loading query", err)
+          console.warn("Error while loading query", err)
           reject(err)
         })
     })

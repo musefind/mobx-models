@@ -1,4 +1,5 @@
-import { toJS, extendObservable } from 'mobx'
+import { toJS, observable } from 'mobx'
+import Model from './Model'
 
 export const State = {
   toJS() {
@@ -7,14 +8,10 @@ export const State = {
 }
 
 export default class Store {
-  objects
-  object
+  objects = observable([])
+  object = Model
 
   constructor(object) {
-    extendObservable(this, {
-      objects: []
-    })
-
     if (!object) {
       throw Error.new("Store must be initialized with a Model class")
     }
