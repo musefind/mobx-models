@@ -1,4 +1,4 @@
-import { observable, toJS, extendObservable } from 'mobx'
+import { observable, toJS, extendObservable, isObservableObject } from 'mobx'
 import { camelize } from './helpers'
 
 let globalOid = 0
@@ -27,12 +27,14 @@ export default class Model {
   setLoading() {
     this._loaded.set(false)
   }
+  
+  constructor(data) {
+    data = data || {}
 
-  init(data) {
     if (this.constructor.camelize) {
       data = camelize(data)
     }
-    
+
     this._oid = globalOid += 1
 
     if (!data.id) {
@@ -52,11 +54,14 @@ export default class Model {
         } else {
           data[key] = store.findOrInitialize(data[key])
         }
+
       }
     })
-    
+
     this.constructor.fields.forEach(field => {
-      if (!data[field]) data[field] = null
+      if (!data[field]) {
+        data[field] = null
+      }
     })
 
     extendObservable(this, data)
@@ -68,13 +73,23 @@ export default class Model {
     }
     
     Object.keys(data).forEach(param => {
+      
+      if (this[param].assign) {
+        this[param].assign(data[param])
+        return
+      }
+      
       if (this[param] && this[param].constructor.name === 'ObservableArray') {
         this[param].replace(data[param])
-      } else if (this[param] && this[param].constructor.name === 'Object') {
-        Object.keys(data[param]).forEach(key => this[param][key] = data[param][key])
-      } else {
-        this[param] = data[param]
+        return
       }
+      
+      if (this[param].constructor.name === 'Object') {
+        Object.assign(this[param], data[param])
+        return
+      }
+      
+      this[param] = data[param]
     })
   }
 

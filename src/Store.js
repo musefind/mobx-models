@@ -38,7 +38,6 @@ export default class Store {
       obj.assign(params)
     } else {
       obj = new this.object(params)
-      obj.init(params)
       this.objects.push(obj)
     }
 
