@@ -97,18 +97,8 @@ var Model = function () {
 
       Object.keys(data).forEach(function (param) {
 
-        if (_this2[param].assign) {
+        if (_this2[param] && _this2[param].assign) {
           _this2[param].assign(data[param]);
-          return;
-        }
-
-        if (_this2[param] && _this2[param].constructor.name === 'ObservableArray') {
-          _this2[param].replace(data[param]);
-          return;
-        }
-
-        if (_this2[param].constructor.name === 'Object') {
-          Object.assign(_this2[param], data[param]);
           return;
         }
 

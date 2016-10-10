@@ -74,18 +74,8 @@ export default class Model {
     
     Object.keys(data).forEach(param => {
       
-      if (this[param].assign) {
+      if (this[param] && this[param].assign) {
         this[param].assign(data[param])
-        return
-      }
-      
-      if (this[param] && this[param].constructor.name === 'ObservableArray') {
-        this[param].replace(data[param])
-        return
-      }
-      
-      if (this[param].constructor.name === 'Object') {
-        Object.assign(this[param], data[param])
         return
       }
       
