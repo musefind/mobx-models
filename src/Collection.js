@@ -20,6 +20,14 @@ export default class Collection {
         this.loader = loader
       }
     }
+
+    if (opts.onRemove) {
+      this.onStoreRemove = opts.onRemove
+    }
+
+    if (opts.onInsert) {
+      this.onStoreInsert = opts.onInsert
+    }
     
     this.store.onRemove(this.onStoreRemove.bind(this))
     this.store.onInsert(this.onStoreInsert.bind(this))
