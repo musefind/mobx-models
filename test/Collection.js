@@ -2,6 +2,7 @@ const assert = require('assert')
 const MobxModel = require('../index')
 
 describe('Collection', () => {
+  
   it('should load a collection', (done) => {
     const data = [
       {id: 1, name: 'o1'},
@@ -58,4 +59,5 @@ describe('Collection', () => {
       done()
     }, 3)
   })
+  
 })

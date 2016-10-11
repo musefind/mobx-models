@@ -2,6 +2,7 @@ const assert = require('assert')
 const MobxModel = require('../index')
 
 describe('Store', () => {
+  
   it('should only keep one object by ID', () => {
     const store = new MobxModel.Store(MobxModel.Model)
     
@@ -12,4 +13,5 @@ describe('Store', () => {
     assert.equal(store.objects.length, 2)
     assert.equal(store.find(2).name, 't3')
   })
+  
 })

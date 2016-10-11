@@ -2,6 +2,7 @@ const assert = require('assert')
 const MobxModel = require('../index')
 
 describe('MobXModel', () => {
+  
   it('handles nested objects', () => {
     class Author extends MobxModel.Model {}
     class Blog extends MobxModel.Model {}
@@ -24,4 +25,5 @@ describe('MobXModel', () => {
       assert.equal(blog.author.constructor.name, 'Author')
     })
   })
+  
 })
