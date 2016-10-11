@@ -77,9 +77,11 @@ var Store = function () {
   return Store;
 }();
 
-// if (process.env.NODE_ENV !== 'production' && window) {
-//   try { window.State = State } catch (e) {}
-// }
-
-
 exports.default = Store;
+
+
+try {
+  if (process.env.NODE_ENV !== 'production') {
+    window.State = State;
+  }
+} catch (e) {}

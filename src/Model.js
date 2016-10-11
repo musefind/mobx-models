@@ -7,6 +7,7 @@ export default class Model {
   static nestedStores = {}
   static fields = []
   static camelize = false
+  static processor = null
   
   id
   _oid = null
@@ -30,6 +31,10 @@ export default class Model {
   
   constructor(data) {
     data = data || {}
+    
+    if (this.constructor.processor) {
+      data = this.constructor.processor(data)
+    }
 
     if (this.constructor.camelize) {
       data = camelize(data)
@@ -70,6 +75,10 @@ export default class Model {
   assign(data) {
     if (this.constructor.camelize) {
       data = camelize(data)
+    }
+
+    if (this.constructor.processor) {
+      data = this.constructor.processor(data)
     }
     
     Object.keys(data).forEach(param => {

@@ -16,6 +16,7 @@ var Collection = function () {
 
     this._loaded = (0, _mobx.observable)(false);
     this._results = (0, _mobx.observable)([]);
+    this._locked = false;
 
     this.store = store;
     this.loader = loader;
@@ -77,18 +78,25 @@ var Collection = function () {
       var _this = this;
 
       return new Promise(function (resolve, reject) {
+        if (_this._locked) {
+          return resolve(_this._results);
+        }
+
         if (_this.loaded && !force) {
           return resolve(_this._results);
         }
 
+        _this._locked = true;
         _this.loader().then(function (results) {
           _this._results.replace(results.map(function (r) {
             return _this.store.findOrInitialize(r);
           }));
           _this.setLoaded();
+          _this._locked = false;
           resolve(_this._results);
         }).catch(function (err) {
           console.warn("Error while loading query", err);
+          _this._locked = false;
           reject(err);
         });
       });

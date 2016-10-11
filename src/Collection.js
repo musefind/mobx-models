@@ -3,6 +3,7 @@ import { observable } from 'mobx'
 export default class Collection {
   _loaded = observable(false)
   _results = observable([])
+  _locked = false
   loader
   store
 
@@ -70,18 +71,25 @@ export default class Collection {
 
   load(force) {
     return new Promise((resolve, reject) => {
+      if (this._locked) {
+        return resolve(this._results)
+      }
+
       if (this.loaded && !force) {
         return resolve(this._results)
       }
 
+      this._locked = true
       this.loader()
         .then(results => {
           this._results.replace(results.map((r) => this.store.findOrInitialize(r)))
           this.setLoaded()
+          this._locked = false
           resolve(this._results)
         })
         .catch((err) => {
           console.warn("Error while loading query", err)
+          this._locked = false
           reject(err)
         })
     })

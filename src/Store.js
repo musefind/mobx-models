@@ -50,6 +50,8 @@ export default class Store {
 
 }
 
-// if (process.env.NODE_ENV !== 'production' && window) {
-//   try { window.State = State } catch (e) {}
-// }
+try {
+  if (process.env.NODE_ENV !== 'production') {
+    window.State = State
+  }
+} catch (e) {}

@@ -47,6 +47,10 @@ var Model = function () {
 
     data = data || {};
 
+    if (this.constructor.processor) {
+      data = this.constructor.processor(data);
+    }
+
     if (this.constructor.camelize) {
       data = (0, _helpers.camelize)(data);
     }
@@ -93,6 +97,10 @@ var Model = function () {
 
       if (this.constructor.camelize) {
         data = (0, _helpers.camelize)(data);
+      }
+
+      if (this.constructor.processor) {
+        data = this.constructor.processor(data);
       }
 
       Object.keys(data).forEach(function (param) {
@@ -162,6 +170,7 @@ var Model = function () {
 Model.nestedStores = {};
 Model.fields = [];
 Model.camelize = false;
+Model.processor = null;
 exports.default = Model;
 
 
