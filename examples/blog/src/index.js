@@ -4,6 +4,23 @@ import { observer } from 'mobx-react'
 import BlogStore from './stores/BlogStore'
 import UiStore from './stores/UiStore'
 
+const Field = observer(({ model, type, className, rows, name }) => {
+
+  if (type === 'textarea') {
+    return <textarea className={className}
+                     name={name}
+                     rows={rows}
+                     value={model[name] || ''}
+                     onChange={(e) => { model[name] = e.target.value }} />
+  } else {
+    return <input className={className}
+                  type={type || 'text'}
+                  name={name}
+                  value={model[name] || ''}
+                  onChange={(e) => { model[name] = e.target.value }} />
+  }
+})
+
 const Post = observer(({ blog, setCurrentPost }) =>
   <article onClick={() => { setCurrentPost(blog) }}>
     <h6>{blog.title}</h6>
@@ -32,9 +49,9 @@ const EditPost = observer(({ blog, newPost }) => {
     <div>
       <button onClick={newPost}>New Post</button>
       <hr />
-      <input value={post.title} type="text" name="Title" onChange={(e) => { post.title = e.target.value }} />
+      <Field type="text" field="title" model={post} />
       <br />
-      <textarea name="Content" value={post.content || ''} onChange={(e) => { post.content = e.target.value }} />
+      <Field type="textarea" field="content" model={post} />
       <p>Author: {post.author.name}</p>
     </div>
   )
