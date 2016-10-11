@@ -40,6 +40,9 @@ var Store = function () {
 
     // initialize this in the global State object, this contains all objects
     State[object.name] = this;
+
+    this.findOrInitialize = (0, _mobx.action)(object.name + 'Store#findOrInitialize', this.findOrInitialize);
+    this.remove = (0, _mobx.action)(object.name + 'Store#remove', this.remove);
   }
 
   _createClass(Store, [{

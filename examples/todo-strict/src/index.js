@@ -23,7 +23,7 @@ class Todo extends Model {
 
 const TodoStore = new Store(Todo)
 
-TodoStore.add = action(() => { TodoStore.findOrInitialize({text: 'New Todo'}) })
+TodoStore.add = () => { TodoStore.findOrInitialize({text: 'New Todo'}) }
 
 const TodoItem = observer(({ todo }) => (
   <li>

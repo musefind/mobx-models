@@ -1,5 +1,4 @@
-import { observable, toJS, extendObservable, isObservableObject } from 'mobx'
-import { camelize } from './helpers'
+import { observable, toJS, extendObservable, action } from 'mobx'
 
 let globalOid = 0
 
@@ -62,6 +61,8 @@ export default class Model {
         data[field] = null
       }
     })
+
+    this.assign = action(`${this.constructor.name}.${this._oid}#assign`, this.assign)
 
     this.onAssign(data)
     

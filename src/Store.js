@@ -1,4 +1,4 @@
-import { toJS, observable } from 'mobx'
+import { toJS, observable, action } from 'mobx'
 import Model from './Model'
 
 export const State = {
@@ -23,6 +23,9 @@ export default class Store {
     
     // initialize this in the global State object, this contains all objects
     State[object.name] = this
+
+    this.findOrInitialize = action(`${object.name}Store#findOrInitialize`, this.findOrInitialize)
+    this.remove = action(`${object.name}Store#remove`, this.remove)
   }
 
   find(id) {
