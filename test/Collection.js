@@ -34,4 +34,28 @@ describe('Collection', () => {
       done()
     }, 50)
   })
+  
+  it('should remove from a collection', (done) => {
+    const data = [
+      {id: 1, name: 'o1'},
+      {id: 3, name: 'o2'},
+      {id: 3, name: 'o3'},
+    ]
+
+    const store = new MobxModel.Store(MobxModel.Model)
+    const collection = new MobxModel.Collection(store, () => {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => { resolve(data) }, 1)
+      })
+    })
+    
+    collection.load()
+    
+    setTimeout(() => {
+      assert.equal(collection.length, 3)
+      store.remove(1)
+      assert.equal(collection.length, 2)
+      done()
+    }, 3)
+  })
 })
