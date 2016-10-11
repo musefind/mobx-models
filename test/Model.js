@@ -3,6 +3,7 @@ const MobxModel = require('../index')
 const isObservable = require('mobx').isObservable
 const autorun = require('mobx').autorun
 const observe = require('mobx').observe
+const camelize = require('../helpers').camelize
 
 const assertReacts = (instance, field, done, modify) => {
   let times = 0
@@ -48,9 +49,11 @@ describe('Model', () => {
   })
 
   it('should camelize properties', () => {
-    class Test extends MobxModel.Model {}
-    Test.camelize = true
-    
+    class Test extends MobxModel.Model {
+      static process(data) {
+        return camelize(data)
+      }
+    }
     const instance = new Test({test_value: 'foo'})
 
     assert.equal('foo', instance.testValue)

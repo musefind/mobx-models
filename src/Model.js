@@ -6,8 +6,8 @@ let globalOid = 0
 export default class Model {
   static nestedStores = {}
   static fields = []
-  static camelize = false
-  static processor = null
+  
+  static process(data) { return data }
   
   id
   _oid = null
@@ -31,56 +31,52 @@ export default class Model {
   
   constructor(data) {
     data = data || {}
+    data = this.constructor.process(data)
     
-    if (this.constructor.processor) {
-      data = this.constructor.processor(data)
-    }
-
-    if (this.constructor.camelize) {
-      data = camelize(data)
-    }
-
     this._oid = globalOid += 1
 
-    if (!data.id) {
-      data.id = null
-    }
-
+    // Loop through the data and replace each instance of a nested object, recognized through the nested
+    // stores object with the instances of that nested object. Handles arrays as well as singletons.
     Object.keys(data).forEach(key => {
       if (this.constructor.nestedStores[key]) {
         const store = this.constructor.nestedStores[key]
 
         if (isArray(data[key])) {
-          const newArr = []
-          data[key].forEach(val => {
-            newArr.push(store.findOrInitialize(val))
-          })
-          data[key] = newArr
+          data[key] = data[key].map(val => store.findOrInitialize(val))
         } else {
           data[key] = store.findOrInitialize(data[key])
         }
 
       }
     })
-
+    
+    // Ensure that the ID property exists.
+    if (!data.id) {
+      data.id = null
+    }
+    
+    // Initialize the fields to a null value. Essentially is an easier way of defining observables,
+    // especially if you don't have access to decorators.
     this.constructor.fields.forEach(field => {
       if (!data[field]) {
         data[field] = null
       }
     })
 
+    this.onAssign(data)
+    
     extendObservable(this, data)
   }
-
+  
   assign(data) {
-    if (this.constructor.camelize) {
-      data = camelize(data)
-    }
-
-    if (this.constructor.processor) {
-      data = this.constructor.processor(data)
-    }
+    data = data || {}
+    data = this.constructor.process(data)
     
+    this.onAssign(data)
+
+    // Loop through all of the items to assign. If there is are nested objects, meaning that the object
+    // has 'assign' defined, then we call this. Otherwise we just set the value.
+    // todo: should use Object#assign for Objects?
     Object.keys(data).forEach(param => {
       
       if (this[param] && this[param].assign) {
@@ -91,6 +87,8 @@ export default class Model {
       this[param] = data[param]
     })
   }
+
+  onAssign() {}
 
   insert() {
     throw new Error("Insert must be implemented")

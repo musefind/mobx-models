@@ -35,6 +35,11 @@ var Model = function () {
     get: function get() {
       return !this.loaded;
     }
+  }], [{
+    key: 'process',
+    value: function process(data) {
+      return data;
+    }
   }]);
 
   function Model(data) {
@@ -46,20 +51,9 @@ var Model = function () {
     this._loaded = (0, _mobx.observable)(false);
 
     data = data || {};
-
-    if (this.constructor.processor) {
-      data = this.constructor.processor(data);
-    }
-
-    if (this.constructor.camelize) {
-      data = (0, _helpers.camelize)(data);
-    }
+    data = this.constructor.process(data);
 
     this._oid = globalOid += 1;
-
-    if (!data.id) {
-      data.id = null;
-    }
 
     Object.keys(data).forEach(function (key) {
       if (_this.constructor.nestedStores[key]) {
@@ -81,6 +75,11 @@ var Model = function () {
       }
     });
 
+    if (!data.id) {
+      data.id = null;
+    }
+
+    // initialize the fields to a null value
     this.constructor.fields.forEach(function (field) {
       if (!data[field]) {
         data[field] = null;
@@ -95,13 +94,8 @@ var Model = function () {
     value: function assign(data) {
       var _this2 = this;
 
-      if (this.constructor.camelize) {
-        data = (0, _helpers.camelize)(data);
-      }
-
-      if (this.constructor.processor) {
-        data = this.constructor.processor(data);
-      }
+      data = data || {};
+      data = this.constructor.process(data);
 
       Object.keys(data).forEach(function (param) {
 
@@ -169,8 +163,6 @@ var Model = function () {
 
 Model.nestedStores = {};
 Model.fields = [];
-Model.camelize = false;
-Model.processor = null;
 exports.default = Model;
 
 
