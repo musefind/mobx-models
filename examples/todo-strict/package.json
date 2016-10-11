@@ -1,0 +1,21 @@
+{
+  "name": "todo-strict",
+  "version": "0.1.0",
+  "private": true,
+  "devDependencies": {
+    "mobx-react-devtools": "^4.2.9",
+    "react-scripts": "0.6.1"
+  },
+  "dependencies": {
+    "mobx": "^2.6.0",
+    "mobx-react": "^3.5.8",
+    "react": "^15.3.2",
+    "react-dom": "^15.3.2"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}

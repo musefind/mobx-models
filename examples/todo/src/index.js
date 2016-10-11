@@ -11,7 +11,7 @@ const TodoItem = observer(({ todo }) => (
   </li>
 ))
 
-const App = observer(({ UiStore, TodoStore }) => (
+const App = observer(({ TodoStore }) => (
   <div>
     <ul>
       {TodoStore.objects.map(todo =>
