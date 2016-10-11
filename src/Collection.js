@@ -10,27 +10,34 @@ export default class Collection {
 
   constructor(store, opts, loader) {
     this.store = store
-    if (!loader) {
-      this.loader = opts
-    } else {
-      this._opts = opts
-      if (opts.loader) {
-        this.loader = opts.loader
-      } else {
+
+    if (typeof opts === 'object') {
+      if (loader) {
         this.loader = loader
+      } else {
+        this.loader = opts.loader
       }
+      
+      this._opts = opts
+    } else if (typeof opts === 'function') {
+      this.loader = opts
     }
 
-    if (opts.onRemove) {
-      this.onStoreRemove = opts.onRemove
+    if (this._opts.onRemove) {
+      this.store.onRemove(this._opts.onRemove.bind(this))
+    } else {
+      this.store.onRemove(this.onStoreRemove.bind(this))
     }
 
-    if (opts.onInsert) {
-      this.onStoreInsert = opts.onInsert
+    if (this._opts.onInsert) {
+      this.store.onInsert(this._opts.onInsert.bind(this))
+    } else {
+      this.store.onInsert(this.onStoreInsert.bind(this))
     }
-    
-    this.store.onRemove(this.onStoreRemove.bind(this))
-    this.store.onInsert(this.onStoreInsert.bind(this))
+
+    if (typeof this.loader !== 'function') {
+      throw new Error(`Loader is not a function ${this.loader}`)
+    }
   }
 
   get loaded() {

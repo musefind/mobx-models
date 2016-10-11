@@ -1,12 +1,14 @@
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _mobx = require("mobx");
+var _mobx = require('mobx');
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -20,83 +22,98 @@ var Collection = function () {
     this._opts = {};
 
     this.store = store;
-    if (!loader) {
-      this.loader = opts;
-    } else {
-      this._opts = opts;
-      if (opts.loader) {
-        this.loader = opts.loader;
-      } else {
+
+    if ((typeof opts === 'undefined' ? 'undefined' : _typeof(opts)) === 'object') {
+      if (loader) {
         this.loader = loader;
+      } else {
+        this.loader = opts.loader;
       }
+
+      this._opts = opts;
+    } else if (typeof opts === 'function') {
+      this.loader = opts;
     }
 
-    this.store.onRemove(this.onStoreRemove.bind(this));
-    this.store.onInsert(this.onStoreInsert.bind(this));
+    if (this._opts.onRemove) {
+      this.store.onRemove(this._opts.onRemove.bind(this));
+    } else {
+      this.store.onRemove(this.onStoreRemove.bind(this));
+    }
+
+    if (this._opts.onInsert) {
+      this.store.onInsert(this._opts.onInsert.bind(this));
+    } else {
+      this.store.onInsert(this.onStoreInsert.bind(this));
+    }
+
+    if (typeof this.loader !== 'function') {
+      throw new Error('Loader is not a function ' + this.loader);
+    }
   }
 
   _createClass(Collection, [{
-    key: "setLoaded",
+    key: 'setLoaded',
     value: function setLoaded() {
       this._loaded.set(true);
     }
   }, {
-    key: "setLoading",
+    key: 'setLoading',
     value: function setLoading() {
       this._loaded.set(false);
     }
   }, {
-    key: "map",
+    key: 'map',
     value: function map(fn) {
       return this.results.map(fn);
     }
   }, {
-    key: "forEach",
+    key: 'forEach',
     value: function forEach(fn) {
       return this.results.forEach(fn);
     }
   }, {
-    key: "indexOf",
+    key: 'indexOf',
     value: function indexOf(item) {
       return this.results.indexOf(item);
     }
   }, {
-    key: "reverse",
+    key: 'reverse',
     value: function reverse() {
       return this.results.reverse();
     }
   }, {
-    key: "reduce",
+    key: 'reduce',
     value: function reduce(fn) {
       return this.results.reduce(fn);
     }
   }, {
-    key: "reduceRight",
+    key: 'reduceRight',
     value: function reduceRight() {
       return this.results.reduceRight();
     }
   }, {
-    key: "filter",
+    key: 'filter',
     value: function filter(fn) {
       return this.results.filter(fn);
     }
   }, {
-    key: "find",
+    key: 'find',
     value: function find(fn) {
       return this.results.find(fn);
     }
   }, {
-    key: "push",
+    key: 'push',
     value: function push(obj) {
       return this.results.push(obj);
     }
   }, {
-    key: "onStoreRemove",
+    key: 'onStoreRemove',
     value: function onStoreRemove(obj) {
       this._results.remove(obj);
     }
   }, {
-    key: "onStoreInsert",
+    key: 'onStoreInsert',
     value: function onStoreInsert(obj) {
       if (this._opts.takeAll) {
         if (!this._results.find(function (o) {
@@ -107,7 +124,7 @@ var Collection = function () {
       }
     }
   }, {
-    key: "load",
+    key: 'load',
     value: function load(force) {
       var _this = this;
 
@@ -136,23 +153,23 @@ var Collection = function () {
       });
     }
   }, {
-    key: "loaded",
+    key: 'loaded',
     get: function get() {
       return this._loaded.get();
     }
   }, {
-    key: "loading",
+    key: 'loading',
     get: function get() {
       return !this.loaded;
     }
   }, {
-    key: "results",
+    key: 'results',
     get: function get() {
       this.load();
       return this._results;
     }
   }, {
-    key: "length",
+    key: 'length',
     get: function get() {
       return this._results.length;
     }

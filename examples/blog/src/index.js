@@ -1,62 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import MobXModel from '../../../index'
-import { getAllPosts, getSingleAuthor, getSinglePost } from './api'
 import { observer } from 'mobx-react'
-import { observable } from 'mobx'
-
-class Author extends MobXModel.Model {
-  static fields = ['id', 'name']
-  
-  retrieve() {
-    return getSingleAuthor(this.id)
-  }
-}
-
-const AuthorStore = new MobXModel.Store(Author)
-
-class Blog extends MobXModel.Model {
-  static fields = ['id', 'title', 'content']
-  static nestedStores = {
-    author: AuthorStore,
-  }
-  static processor = (data) => {
-    data.author = {id: data.author_id, name: null}
-    delete data.author_id
-    return data
-  }
-  
-  retrieve() {
-    return getSinglePost(this.id)
-  }
-}
-
-const BlogStore = new MobXModel.Store(Blog)
-
-BlogStore.all = new MobXModel.Collection(BlogStore, {takeAll: true}, () => {
-  return getAllPosts()
-})
-
-const UiStore = (new class {
-  currentPost = observable(null)
-
-  constructor() {
-    this.setCurrentPost = this.setCurrentPost.bind(this)
-    this.setNewCurrentPost = this.setNewCurrentPost.bind(this)
-  }
-
-  setCurrentPost(post) {
-    post.load()
-    post.author.load()
-    this.currentPost.set(post)
-  }
-
-  setNewCurrentPost() {
-    const post = BlogStore.findOrInitialize({title: 'New Post', content: ''})
-    this.currentPost.set(post)
-  }
-
-}())
+import BlogStore from './stores/BlogStore'
+import UiStore from './stores/UiStore'
 
 const Post = observer(({ blog, setCurrentPost }) =>
   <article onClick={() => { setCurrentPost(blog) }}>
