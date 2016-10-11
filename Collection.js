@@ -17,19 +17,22 @@ var Collection = function () {
     this._loaded = (0, _mobx.observable)(false);
     this._results = (0, _mobx.observable)([]);
     this._locked = false;
+    this._opts = {};
 
     this.store = store;
     if (!loader) {
       this.loader = opts;
-      this.store.listen(this.take.bind(this));
     } else {
-      this.loader = loader;
-      if (opts.takeAll) {
-        this.store.listen(this.takeAll.bind(this));
+      this._opts = opts;
+      if (opts.loader) {
+        this.loader = opts.loader;
       } else {
-        this.store.listen(this.take.bind(this));
+        this.loader = loader;
       }
     }
+
+    this.store.onRemove(this.onStoreRemove.bind(this));
+    this.store.onInsert(this.onStoreInsert.bind(this));
   }
 
   _createClass(Collection, [{
@@ -88,15 +91,19 @@ var Collection = function () {
       return this.results.push(obj);
     }
   }, {
-    key: "take",
-    value: function take(obj) {}
+    key: "onStoreRemove",
+    value: function onStoreRemove(obj) {
+      this._results.remove(obj);
+    }
   }, {
-    key: "takeAll",
-    value: function takeAll(obj) {
-      if (!this._results.find(function (o) {
-        return o._oid === obj._oid;
-      })) {
-        this._results.push(obj);
+    key: "onStoreInsert",
+    value: function onStoreInsert(obj) {
+      if (this._opts.takeAll) {
+        if (!this._results.find(function (o) {
+          return o === obj;
+        })) {
+          this._results.push(obj);
+        }
       }
     }
   }, {

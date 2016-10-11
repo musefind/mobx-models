@@ -4,6 +4,7 @@ export default class Collection {
   _loaded = observable(false)
   _results = observable([])
   _locked = false
+  _opts = {}
   loader
   store
 
@@ -11,15 +12,17 @@ export default class Collection {
     this.store = store
     if (!loader) {
       this.loader = opts
-      this.store.listen(this.take.bind(this))
     } else {
-      this.loader = loader
-      if (opts.takeAll) {
-        this.store.listen(this.takeAll.bind(this))
+      this._opts = opts
+      if (opts.loader) {
+        this.loader = opts.loader
       } else {
-        this.store.listen(this.take.bind(this))
+        this.loader = loader
       }
     }
+    
+    this.store.onRemove(this.onStoreRemove.bind(this))
+    this.store.onInsert(this.onStoreInsert.bind(this))
   }
 
   get loaded() {
@@ -83,14 +86,18 @@ export default class Collection {
     return this.results.push(obj)
   }
   
-  take(obj) {}
+  onStoreRemove(obj) {
+    this._results.remove(obj)
+  }
   
-  takeAll(obj) {
-    if (!this._results.find(o => o._oid === obj._oid)) {
-      this._results.push(obj)
+  onStoreInsert(obj) {
+    if (this._opts.takeAll) {
+      if (!this._results.find(o => o === obj)) {
+        this._results.push(obj)
+      }
     }
   }
-
+  
   load(force) {
     return new Promise((resolve, reject) => {
       if (this._locked) {

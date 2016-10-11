@@ -10,7 +10,8 @@ export const State = {
 export default class Store {
   objects = observable([])
   object
-  callbacks = []
+  _onInsertCallbacks = []
+  _onRemoveCallbacks = []
 
   constructor(object) {
     // the object is a constructor function used to provide new instances.
@@ -32,11 +33,16 @@ export default class Store {
     const obj = this.objects.find(o => o.id === id)
     if (obj) {
       this.objects.remove(obj)
+      this._onRemoveCallbacks.forEach(cb => cb(obj))
     }
   }
   
-  listen(fn) {
-    this.callbacks.push(fn)
+  onInsert(fn) {
+    this._onInsertCallbacks.push(fn)
+  }
+
+  onRemove(fn) {
+    this._onRemoveCallbacks.push(fn)
   }
 
   findOrInitialize(params) {
@@ -47,15 +53,11 @@ export default class Store {
     }
 
     if (obj) {
-      console.log(`store ${this.object.name} > initialize`, obj.id, obj._oid)
       obj.assign(params)
     } else {
       obj = new this.object(params)
-      console.log(`store ${this.object.name} > new`, obj.id, obj._oid)
       this.objects.push(obj)
-      this.callbacks.forEach(cb => {
-        cb(obj)
-      })
+      this._onInsertCallbacks.forEach(cb => cb(obj))
     }
 
     return obj
