@@ -16,7 +16,7 @@ class Author extends MobXModel.Model {
 const AuthorStore = new MobXModel.Store(Author)
 
 class Blog extends MobXModel.Model {
-  static fields = ['id', 'name']
+  static fields = ['id', 'title', 'content']
   static nestedStores = {
     author: AuthorStore,
   }
@@ -33,7 +33,7 @@ class Blog extends MobXModel.Model {
 
 const BlogStore = new MobXModel.Store(Blog)
 
-BlogStore.all = new MobXModel.Collection(BlogStore, () => {
+BlogStore.all = new MobXModel.Collection(BlogStore, {takeAll: true}, () => {
   return getAllPosts()
 })
 
@@ -42,11 +42,17 @@ const UiStore = (new class {
 
   constructor() {
     this.setCurrentPost = this.setCurrentPost.bind(this)
+    this.setNewCurrentPost = this.setNewCurrentPost.bind(this)
   }
 
   setCurrentPost(post) {
     post.load()
     post.author.load()
+    this.currentPost.set(post)
+  }
+
+  setNewCurrentPost() {
+    const post = BlogStore.findOrInitialize({title: 'New Post', content: ''})
     this.currentPost.set(post)
   }
 
@@ -61,22 +67,28 @@ const Post = observer(({ blog, setCurrentPost }) =>
 
 const PostList = observer(({ blogs, setCurrentPost }) =>
   <div>
-    {blogs.map((blog) => <Post key={blog.id} blog={blog} setCurrentPost={setCurrentPost} />)}
+    {blogs.map((blog) => <Post key={blog._oid} blog={blog} setCurrentPost={setCurrentPost} />)}
   </div>
 )
 
-const EditPost = observer(({ blog }) => {
+const EditPost = observer(({ blog, newPost }) => {
   const post = blog.get()
-
   if (!post) {
-    return <div>No Selection.</div>
+    return <div>
+      <hr />
+      <button onClick={newPost}>New Post</button>
+      <br />
+      No Selection.
+    </div>
   }
 
   return (
     <div>
+      <button onClick={newPost}>New Post</button>
+      <hr />
       <input value={post.title} type="text" name="Title" onChange={(e) => { post.title = e.target.value }} />
       <br />
-      <textarea name="Content" value={post.content} onChange={(e) => { post.content = e.target.value }} />
+      <textarea name="Content" value={post.content || ''} onChange={(e) => { post.content = e.target.value }} />
       <p>Author: {post.author.name}</p>
     </div>
   )
@@ -85,7 +97,7 @@ const EditPost = observer(({ blog }) => {
 const App = () => (
   <div>
     <PostList blogs={BlogStore.all} setCurrentPost={UiStore.setCurrentPost} />
-    <EditPost blog={UiStore.currentPost} />
+    <EditPost blog={UiStore.currentPost} newPost={UiStore.setNewCurrentPost} />
   </div>
 )
 

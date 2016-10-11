@@ -11,7 +11,7 @@ var _mobx = require("mobx");
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Collection = function () {
-  function Collection(store, loader) {
+  function Collection(store, opts, loader) {
     _classCallCheck(this, Collection);
 
     this._loaded = (0, _mobx.observable)(false);
@@ -19,7 +19,17 @@ var Collection = function () {
     this._locked = false;
 
     this.store = store;
-    this.loader = loader;
+    if (!loader) {
+      this.loader = opts;
+      this.store.listen(this.take.bind(this));
+    } else {
+      this.loader = loader;
+      if (opts.takeAll) {
+        this.store.listen(this.takeAll.bind(this));
+      } else {
+        this.store.listen(this.take.bind(this));
+      }
+    }
   }
 
   _createClass(Collection, [{
@@ -71,6 +81,23 @@ var Collection = function () {
     key: "find",
     value: function find(fn) {
       return this.results.find(fn);
+    }
+  }, {
+    key: "push",
+    value: function push(obj) {
+      return this.results.push(obj);
+    }
+  }, {
+    key: "take",
+    value: function take(obj) {}
+  }, {
+    key: "takeAll",
+    value: function takeAll(obj) {
+      if (!this._results.find(function (o) {
+        return o._oid === obj._oid;
+      })) {
+        this._results.push(obj);
+      }
     }
   }, {
     key: "load",

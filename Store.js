@@ -28,6 +28,7 @@ var Store = function () {
     _classCallCheck(this, Store);
 
     this.objects = (0, _mobx.observable)([]);
+    this.callbacks = [];
 
     // the object is a constructor function used to provide new instances.
     if (object) {
@@ -48,21 +49,41 @@ var Store = function () {
       });
     }
   }, {
+    key: 'remove',
+    value: function remove(id) {
+      var obj = this.objects.find(function (o) {
+        return o.id === id;
+      });
+      if (obj) {
+        this.objects.remove(obj);
+      }
+    }
+  }, {
+    key: 'listen',
+    value: function listen(fn) {
+      this.callbacks.push(fn);
+    }
+  }, {
     key: 'findOrInitialize',
     value: function findOrInitialize(params) {
       var obj = void 0;
 
       if (params.id) {
         obj = this.objects.find(function (o) {
-          return o.id === params.id;
+          return !!o.id && o.id === params.id;
         });
       }
 
       if (obj) {
+        console.log('store ' + this.object.name + ' > initialize', obj.id, obj._oid);
         obj.assign(params);
       } else {
         obj = new this.object(params);
+        console.log('store ' + this.object.name + ' > new', obj.id, obj._oid);
         this.objects.push(obj);
+        this.callbacks.forEach(function (cb) {
+          cb(obj);
+        });
       }
 
       return obj;

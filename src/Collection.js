@@ -7,9 +7,19 @@ export default class Collection {
   loader
   store
 
-  constructor(store, loader) {
+  constructor(store, opts, loader) {
     this.store = store
-    this.loader = loader
+    if (!loader) {
+      this.loader = opts
+      this.store.listen(this.take.bind(this))
+    } else {
+      this.loader = loader
+      if (opts.takeAll) {
+        this.store.listen(this.takeAll.bind(this))
+      } else {
+        this.store.listen(this.take.bind(this))
+      }
+    }
   }
 
   get loaded() {
@@ -67,6 +77,18 @@ export default class Collection {
 
   find(fn) {
     return this.results.find(fn)
+  }
+  
+  push(obj) {
+    return this.results.push(obj)
+  }
+  
+  take(obj) {}
+  
+  takeAll(obj) {
+    if (!this._results.find(o => o._oid === obj._oid)) {
+      this._results.push(obj)
+    }
   }
 
   load(force) {
