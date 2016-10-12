@@ -1,5 +1,5 @@
 {
-  "name": "mobx-model",
+  "name": "mobx-models",
   "version": "0.1.0",
   "description": "Opinionated Mobx Framework",
   "main": "index.js",
