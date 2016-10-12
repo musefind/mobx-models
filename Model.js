@@ -79,7 +79,7 @@ var Model = function () {
     // Initialize the fields to a null value. Essentially is an easier way of defining observables,
     // especially if you don't have access to decorators.
     this.constructor.fields.forEach(function (field) {
-      if (!data[field]) {
+      if (data[field] === undefined) {
         data[field] = null;
       }
     });
@@ -113,6 +113,8 @@ var Model = function () {
 
         _this2[param] = data[param];
       });
+
+      return this;
     }
   }, {
     key: "onAssign",

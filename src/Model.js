@@ -57,7 +57,7 @@ export default class Model {
     // Initialize the fields to a null value. Essentially is an easier way of defining observables,
     // especially if you don't have access to decorators.
     this.constructor.fields.forEach(field => {
-      if (!data[field]) {
+      if (data[field] === undefined) {
         data[field] = null
       }
     })
@@ -87,6 +87,8 @@ export default class Model {
       
       this[param] = data[param]
     })
+
+    return this
   }
 
   onAssign() {}
