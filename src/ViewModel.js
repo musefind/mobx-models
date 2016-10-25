@@ -10,9 +10,9 @@ export default class ViewModel {
   
   commit() {
     if (this._original.assign) {
-      this._original.assign(this)
+      this._original.assign(toJS(this))
     } else {
-      Object.assign(this._original, this)
+      Object.assign(this._original, toJS(this))
     }
   }
   

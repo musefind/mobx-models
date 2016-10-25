@@ -22,9 +22,9 @@ var ViewModel = function () {
     key: 'commit',
     value: function commit() {
       if (this._original.assign) {
-        this._original.assign(this);
+        this._original.assign((0, _mobx.toJS)(this));
       } else {
-        Object.assign(this._original, this);
+        Object.assign(this._original, (0, _mobx.toJS)(this));
       }
     }
   }, {

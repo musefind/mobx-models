@@ -32,12 +32,22 @@ describe('ViewModel', () => {
   it('works with arrays', () => {
     const instance = new MobxModel.Model({names: ['foo']})
     const vm = instance.viewModel()
-    
+
+    assert.notEqual(instance.names, vm.names)
+
     vm.names.push('bar')
     
-    assert.deepEqual(instance.names, ['foo'])
-    assert.deepEqual(vm.names, ['foo', 'bar'])
-    
+    assert.equal(instance.names[0], 'foo')
+    assert.equal(instance.names[1], undefined)
+    assert.equal(vm.names[0], 'foo')
+    assert.equal(vm.names[1], 'bar')
+
+    vm.commit()
+
+    assert.equal(instance.names[0], 'foo')
+    assert.equal(instance.names[1], 'bar')
+
+    assert.notEqual(instance.names, vm.names)
   })
 
 })
