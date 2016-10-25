@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -6,7 +6,13 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _mobx = require("mobx");
+var _mobx = require('mobx');
+
+var _ViewModel = require('./ViewModel');
+
+var _ViewModel2 = _interopRequireDefault(_ViewModel);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -14,27 +20,27 @@ var globalOid = 0;
 
 var Model = function () {
   _createClass(Model, [{
-    key: "setLoaded",
+    key: 'setLoaded',
     value: function setLoaded() {
       this._loaded.set(true);
     }
   }, {
-    key: "setLoading",
+    key: 'setLoading',
     value: function setLoading() {
       this._loaded.set(false);
     }
   }, {
-    key: "loaded",
+    key: 'loaded',
     get: function get() {
       return this._loaded.get();
     }
   }, {
-    key: "loading",
+    key: 'loading',
     get: function get() {
       return !this.loaded;
     }
   }], [{
-    key: "process",
+    key: 'process',
     value: function process(data) {
       return data;
     }
@@ -47,6 +53,7 @@ var Model = function () {
 
     this._oid = null;
     this._loaded = (0, _mobx.observable)(false);
+    this._viewModel = null;
 
     data = data || {};
     data = this.constructor.process(data);
@@ -84,7 +91,7 @@ var Model = function () {
       }
     });
 
-    this.assign = (0, _mobx.action)(this.constructor.name + "." + this._oid + "#assign", this.assign);
+    this.assign = (0, _mobx.action)(this.constructor.name + '.' + this._oid + '#assign', this.assign);
 
     this.onAssign(data);
 
@@ -92,7 +99,7 @@ var Model = function () {
   }
 
   _createClass(Model, [{
-    key: "assign",
+    key: 'assign',
     value: function assign(data) {
       var _this2 = this;
 
@@ -117,30 +124,30 @@ var Model = function () {
       return this;
     }
   }, {
-    key: "onAssign",
+    key: 'onAssign',
     value: function onAssign() {}
   }, {
-    key: "insert",
+    key: 'insert',
     value: function insert() {
       throw new Error("Insert must be implemented");
     }
   }, {
-    key: "update",
+    key: 'update',
     value: function update() {
       throw new Error("Update must be implemented");
     }
   }, {
-    key: "destroy",
+    key: 'destroy',
     value: function destroy() {
       throw new Error("Delete must be implemented");
     }
   }, {
-    key: "retrieve",
+    key: 'retrieve',
     value: function retrieve() {
       throw new Error("Retrieve must be implemented");
     }
   }, {
-    key: "load",
+    key: 'load',
     value: function load() {
       var _this3 = this;
 
@@ -150,7 +157,7 @@ var Model = function () {
       });
     }
   }, {
-    key: "save",
+    key: 'save',
     value: function save() {
       if (this.id) {
         return this.update();
@@ -159,14 +166,26 @@ var Model = function () {
       }
     }
   }, {
-    key: "toJS",
+    key: 'viewModel',
+    value: function viewModel() {
+      if (!this._viewModel) this._viewModel = new _ViewModel2.default(this);
+      return this._viewModel;
+    }
+  }, {
+    key: 'toJS',
     value: function toJS() {
       return (0, _mobx.toJS)(this);
     }
   }, {
-    key: "data",
+    key: 'data',
     get: function get() {
-      return this.toJS();
+      var data = this.toJS();
+      Object.keys(data).forEach(function (key) {
+        if (key[0] === '_') {
+          delete data[key];
+        }
+      });
+      return data;
     }
   }]);
 

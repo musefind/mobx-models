@@ -1,4 +1,5 @@
 import { observable, toJS, extendObservable, action } from 'mobx'
+import ViewModel from './ViewModel'
 
 let globalOid = 0
 
@@ -11,6 +12,7 @@ export default class Model {
   id
   _oid = null
   _loaded = observable(false)
+  _viewModel = null
 
   get loaded() {
     return this._loaded.get()
@@ -123,9 +125,20 @@ export default class Model {
       return this.insert()
     }
   }
+  
+  viewModel() {
+    if (!this._viewModel) this._viewModel = new ViewModel(this);
+    return this._viewModel
+  }
 
   get data() {
-    return this.toJS()
+    const data = this.toJS()
+    Object.keys(data).forEach(key => {
+      if (key[0] === '_') {
+        delete data[key]
+      }
+    })
+    return data
   }
 
   toJS() {
