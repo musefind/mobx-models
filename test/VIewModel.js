@@ -5,7 +5,6 @@ describe('ViewModel', () => {
 
   it('can set a property', () => {
     const instance = new MobxModel.Model({name: 'foo'})
-    
     const vm = instance.viewModel()
     
     vm.name = 'foobar'
@@ -27,6 +26,18 @@ describe('ViewModel', () => {
 
     assert.equal(vm.name, 'foobar')
     assert.equal(instance.name, 'foobar')
+  })
+  
+  
+  it('works with arrays', () => {
+    const instance = new MobxModel.Model({names: ['foo']})
+    const vm = instance.viewModel()
+    
+    vm.names.push('bar')
+    
+    assert.deepEqual(instance.names, ['foo'])
+    assert.deepEqual(vm.names, ['foo', 'bar'])
+    
   })
 
 })
