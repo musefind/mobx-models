@@ -23,11 +23,15 @@ var State = exports.State = {
   }
 };
 
+try {
+  if (process.env.NODE_ENV !== 'production') window.State = State;
+} catch (e) {}
+
 var Store = function () {
   function Store(object) {
     _classCallCheck(this, Store);
 
-    this.objects = (0, _mobx.observable)([]);
+    this.objects = (0, _mobx.observable)((0, _mobx.asMap)({}));
     this._onInsertCallbacks = [];
     this._onRemoveCallbacks = [];
 
@@ -48,21 +52,17 @@ var Store = function () {
   _createClass(Store, [{
     key: 'find',
     value: function find(id) {
-      return this.objects.find(function (o) {
-        return o.id === id;
-      });
+      return this.objects.get(id);
     }
   }, {
     key: 'remove',
     value: function remove(id) {
-      var obj = this.objects.find(function (o) {
-        return o.id === id;
-      });
+      var obj = this.objects.get(id);
       if (obj) {
-        this.objects.remove(obj);
         this._onRemoveCallbacks.forEach(function (cb) {
           return cb(obj);
         });
+        this.objects.delete(id);
       }
     }
   }, {
@@ -78,19 +78,18 @@ var Store = function () {
   }, {
     key: 'findOrInitialize',
     value: function findOrInitialize(params) {
-      var obj = void 0;
-
-      if (params.id) {
-        obj = this.objects.find(function (o) {
-          return !!o.id && o.id === params.id;
-        });
+      if (!params.id) {
+        throw new Error("findOrInitialize called without an ID");
       }
 
+      var obj = this.objects.get(params.id);
       if (obj) {
         obj.assign(params);
       } else {
-        obj = new this.object(params);
-        this.objects.push(obj);
+        if (!(obj instanceof this.object)) {
+          obj = new this.object(params);
+        }
+        this.objects.set(obj.id, obj);
         this._onInsertCallbacks.forEach(function (cb) {
           return cb(obj);
         });
@@ -109,10 +108,3 @@ var Store = function () {
 }();
 
 exports.default = Store;
-
-
-try {
-  if (process.env.NODE_ENV !== 'production') {
-    window.State = State;
-  }
-} catch (e) {}

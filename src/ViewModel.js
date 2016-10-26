@@ -1,23 +1,46 @@
-import { toJS, extendObservable } from 'mobx'
+import { toJS, extendObservable, action } from 'mobx'
 
 export default class ViewModel {
-  _original
+  model
+  validator
+  data = {}
 
-  constructor(model) {
-    this._original = model
-    this.reset()
+  constructor(model, validator) {
+    const data = model.data || toJS(model)
+    this.model = model
+    this.validator = validator
+
+    Object.keys(data).forEach(key => {
+      Object.defineProperty(this, key, {
+        enumerable: true,
+        configurable: true,
+        get: action(() => {
+          return this.data[key]
+        }),
+        set: action((value) => {
+          this.data[key] = value
+        }),
+      })
+    })
+
+    extendObservable(this.data, this.model.data || toJS(this.model))
+  }
+
+  validate() {
+    if (this.validator) return this.validator(this.data);
+    return true
   }
   
   commit() {
-    if (this._original.assign) {
-      this._original.assign(toJS(this))
+    if (this.model.assign) {
+      this.model.assign(toJS(this.data))
     } else {
-      Object.assign(this._original, toJS(this))
+      Object.assign(this.model, toJS(this.data))
     }
   }
   
   reset() {
-    extendObservable(this, this._original.data || toJS(this._original))
+    Object.assign(this.data, this.model.data || toJS(this.model))
   }
 
 }

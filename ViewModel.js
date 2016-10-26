@@ -11,26 +11,52 @@ var _mobx = require('mobx');
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var ViewModel = function () {
-  function ViewModel(model) {
+  function ViewModel(model, validator) {
+    var _this = this;
+
     _classCallCheck(this, ViewModel);
 
-    this._original = model;
-    this.reset();
+    this.data = {};
+
+    var data = model.data || (0, _mobx.toJS)(model);
+    this.model = model;
+    this.validator = validator;
+
+    Object.keys(data).forEach(function (key) {
+      Object.defineProperty(_this, key, {
+        enumerable: true,
+        configurable: true,
+        get: (0, _mobx.action)(function () {
+          return _this.data[key];
+        }),
+        set: (0, _mobx.action)(function (value) {
+          _this.data[key] = value;
+        })
+      });
+    });
+
+    (0, _mobx.extendObservable)(this.data, this.model.data || (0, _mobx.toJS)(this.model));
   }
 
   _createClass(ViewModel, [{
+    key: 'validate',
+    value: function validate() {
+      if (this.validator) return this.validator(this.data);
+      return true;
+    }
+  }, {
     key: 'commit',
     value: function commit() {
-      if (this._original.assign) {
-        this._original.assign((0, _mobx.toJS)(this));
+      if (this.model.assign) {
+        this.model.assign((0, _mobx.toJS)(this.data));
       } else {
-        Object.assign(this._original, (0, _mobx.toJS)(this));
+        Object.assign(this.model, (0, _mobx.toJS)(this.data));
       }
     }
   }, {
     key: 'reset',
     value: function reset() {
-      (0, _mobx.extendObservable)(this, this._original.data || (0, _mobx.toJS)(this._original));
+      Object.assign(this.data, this.model.data || (0, _mobx.toJS)(this.model));
     }
   }]);
 

@@ -1,4 +1,4 @@
-import { toJS, observable, action } from 'mobx'
+import { toJS, observable, action, asMap } from 'mobx'
 import Model from './Model'
 
 export const State = {
@@ -7,8 +7,10 @@ export const State = {
   }
 }
 
+try { if (process.env.NODE_ENV !== 'production') window.State = State; } catch (e) {}
+
 export default class Store {
-  objects = observable([])
+  objects = observable(asMap({}))
   object
   _onInsertCallbacks = []
   _onRemoveCallbacks = []
@@ -29,14 +31,14 @@ export default class Store {
   }
 
   find(id) {
-    return this.objects.find(o => o.id === id)
+    return this.objects.get(id)
   }
 
   remove(id) {
-    const obj = this.objects.find(o => o.id === id)
+    const obj = this.objects.get(id)
     if (obj) {
-      this.objects.remove(obj)
       this._onRemoveCallbacks.forEach(cb => cb(obj))
+      this.objects.delete(id)
     }
   }
   
@@ -49,17 +51,18 @@ export default class Store {
   }
 
   findOrInitialize(params) {
-    let obj
-
-    if (params.id) {
-      obj = this.objects.find(o => !!o.id && o.id === params.id)
+    if (!params.id) {
+      throw new Error("findOrInitialize called without an ID")
     }
-
+    
+    let obj = this.objects.get(params.id)
     if (obj) {
       obj.assign(params)
     } else {
-      obj = new this.object(params)
-      this.objects.push(obj)
+      if (!(obj instanceof this.object)) {
+        obj = new this.object(params)
+      }
+      this.objects.set(obj.id, obj)
       this._onInsertCallbacks.forEach(cb => cb(obj))
     }
 
@@ -71,9 +74,3 @@ export default class Store {
   }
 
 }
-
-try {
-  if (process.env.NODE_ENV !== 'production') {
-    window.State = State
-  }
-} catch (e) {}

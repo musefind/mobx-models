@@ -10,7 +10,7 @@ describe('Store', () => {
     store.findOrInitialize({id: 2, name: 't2'})
     store.findOrInitialize({id: 2, name: 't3'})
     
-    assert.equal(store.objects.length, 2)
+    assert.equal(store.objects.size, 2)
     assert.equal(store.find(2).name, 't3')
   })
   

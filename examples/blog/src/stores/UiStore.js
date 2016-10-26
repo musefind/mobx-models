@@ -1,5 +1,5 @@
 import { observable } from 'mobx'
-import BlogStore from './BlogStore'
+import Blog from '../models/Blog'
 
 class UiStore {
   currentPost = observable(null)
@@ -16,7 +16,7 @@ class UiStore {
   }
 
   setNewCurrentPost() {
-    const post = BlogStore.findOrInitialize({title: 'New Post', content: ''})
+    const post = new Blog()
     this.currentPost.set(post)
   }
 }

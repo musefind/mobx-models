@@ -12,6 +12,8 @@ var _ViewModel = require('./ViewModel');
 
 var _ViewModel2 = _interopRequireDefault(_ViewModel);
 
+var _Store = require('./Store');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -142,6 +144,15 @@ var Model = function () {
       throw new Error("Delete must be implemented");
     }
   }, {
+    key: 'delete',
+    value: function _delete() {
+      var _this3 = this;
+
+      return this.destroy().then(function () {
+        _this3.store().remove(_this3.id);
+      });
+    }
+  }, {
     key: 'retrieve',
     value: function retrieve() {
       throw new Error("Retrieve must be implemented");
@@ -149,20 +160,25 @@ var Model = function () {
   }, {
     key: 'load',
     value: function load() {
-      var _this3 = this;
+      var _this4 = this;
 
       return this.retrieve().then(function (data) {
-        _this3.assign(data);
-        _this3.setLoaded();
+        _this4.assign(data);
+        _this4.setLoaded();
       });
     }
   }, {
     key: 'save',
     value: function save() {
+      var _this5 = this;
+
       if (this.id) {
         return this.update();
       } else {
-        return this.insert();
+        return this.insert().then(function (res) {
+          _this5.store().findOrInitialize(_this5);
+          return res;
+        });
       }
     }
   }, {
@@ -175,6 +191,11 @@ var Model = function () {
     key: 'toJS',
     value: function toJS() {
       return (0, _mobx.toJS)(this);
+    }
+  }, {
+    key: 'store',
+    value: function store() {
+      return _Store.State[this.constructor.name];
     }
   }, {
     key: 'data',

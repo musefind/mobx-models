@@ -1,5 +1,6 @@
 import { observable, toJS, extendObservable, action } from 'mobx'
 import ViewModel from './ViewModel'
+import { State } from './Store'
 
 let globalOid = 0
 
@@ -107,6 +108,12 @@ export default class Model {
     throw new Error("Delete must be implemented")
   }
   
+  delete() {
+    return this.destroy().then(() => {
+      this.store().remove(this.id)
+    })
+  }
+  
   retrieve() {
     throw new Error("Retrieve must be implemented")
   }
@@ -122,7 +129,10 @@ export default class Model {
     if (this.id) {
       return this.update()
     } else {
-      return this.insert()
+      return this.insert().then((res) => {
+        this.store().findOrInitialize(this)
+        return res
+      })
     }
   }
   
@@ -143,6 +153,10 @@ export default class Model {
 
   toJS() {
     return toJS(this)
+  }
+
+  store() {
+    return State[this.constructor.name]
   }
 
 }

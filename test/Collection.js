@@ -31,7 +31,7 @@ describe('Collection', () => {
       
       assert.equal(collection.map(a => a).length, 3)
       
-      assert.equal(store.objects.length, 2)
+      assert.equal(store.objects.size, 2)
       done()
     }, 50)
   })

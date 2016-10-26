@@ -100,8 +100,7 @@ describe('Model', () => {
     Test.fields = ['id', 'testing', 'test']
     Test.nestedStores.test = TestStore
 
-    const instance = new Test({testing: 'a', test: {testing: 'a'}})
-    
+    const instance = new Test({testing: 'a', test: {id: 2, testing: 'a'}})
     
     assertReacts(instance.test, 'testing', done, () => {
       instance.assign({test: {testing: 'b'}})
