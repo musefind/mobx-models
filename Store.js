@@ -79,7 +79,7 @@ var Store = function () {
     key: 'findOrInitialize',
     value: function findOrInitialize(params) {
       if (!params.id) {
-        throw new Error("findOrInitialize called without an ID");
+        return null;
       }
 
       var obj = this.objects.get(params.id);

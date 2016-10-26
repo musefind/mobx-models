@@ -4,20 +4,20 @@ import { observer } from 'mobx-react'
 import BlogStore from './stores/BlogStore'
 import UiStore from './stores/UiStore'
 
-const Field = observer(({ model, type, className, rows, name }) => {
+const Field = observer(({ model, type, className, rows, field }) => {
 
   if (type === 'textarea') {
     return <textarea className={className}
-                     name={name}
+                     name={field}
                      rows={rows}
-                     value={model[name] || ''}
-                     onChange={(e) => { model[name] = e.target.value }} />
+                     value={model[field] || ''}
+                     onChange={(e) => { model[field] = e.target.value }} />
   } else {
     return <input className={className}
                   type={type || 'text'}
-                  name={name}
-                  value={model[name] || ''}
-                  onChange={(e) => { model[name] = e.target.value }} />
+                  name={field}
+                  value={model[field] || ''}
+                  onChange={(e) => { model[field] = e.target.value }} />
   }
 })
 

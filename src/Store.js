@@ -52,7 +52,7 @@ export default class Store {
 
   findOrInitialize(params) {
     if (!params.id) {
-      throw new Error("findOrInitialize called without an ID")
+      return null
     }
     
     let obj = this.objects.get(params.id)
