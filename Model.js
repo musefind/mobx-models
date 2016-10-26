@@ -57,7 +57,7 @@ var Model = function () {
     this._loaded = (0, _mobx.observable)(false);
     this._viewModel = null;
 
-    data = data || {};
+    data = (0, _mobx.toJS)(data || {});
     data = this.constructor.process(data);
 
     this._oid = globalOid += 1;

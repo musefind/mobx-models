@@ -53,6 +53,7 @@ const EditPost = observer(({ blog, newPost }) => {
       <br />
       <Field type="textarea" field="content" model={post} />
       <p>Author: {post.author.name}</p>
+      <button onClick={() => { post.save() }}>Submit</button>
     </div>
   )
 })

@@ -32,7 +32,7 @@ export default class Model {
   }
   
   constructor(data) {
-    data = data || {}
+    data = toJS(data || {})
     data = this.constructor.process(data)
     
     this._oid = globalOid += 1
