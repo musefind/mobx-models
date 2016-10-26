@@ -10,25 +10,37 @@ var _mobx = require('mobx');
 
 var _helpers = require('./helpers');
 
+var _Model = require('./Model');
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var ViewModel = function () {
-  function ViewModel(model) {
+  function ViewModel(model, modelClass) {
     var _this = this;
 
     _classCallCheck(this, ViewModel);
 
     this.data = {};
     this.set = (0, _mobx.action)(function (key, val) {
+      _this.onSet(key, val);
       _this.data[key] = val;
     });
 
     this.model = model;
+    this.modelClass = modelClass;
+
+    (0, _mobx.extendObservable)(this, {
+      errors: []
+    });
+
     (0, _mobx.extendObservable)(this.data, this.original);
     (0, _helpers.proxyTo)(this, this.data);
   }
 
   _createClass(ViewModel, [{
+    key: 'onSet',
+    value: function onSet(key, val) {}
+  }, {
     key: 'validate',
     value: function validate() {
       return true;
@@ -38,17 +50,22 @@ var ViewModel = function () {
     value: function commit() {
       if (!this.validate()) return false;
 
-      this.force();
+      (0, _Model.assign)(this.model, (0, _mobx.toJS)(this.data));
       return true;
     }
   }, {
-    key: 'force',
-    value: function force() {
-      if (this.model.assign) {
-        this.model.assign((0, _mobx.toJS)(this.data));
-      } else {
-        Object.assign(this.model, (0, _mobx.toJS)(this.data));
+    key: 'create',
+    value: function create() {
+      if (!this.modelClass) {
+        throw new Error("When creating from a ViewModel a modelClass must be provided.");
       }
+
+      this.model = new this.modelClass();
+      if (this.commit()) {
+        return this.model;
+      }
+
+      return null;
     }
   }, {
     key: 'reset',

@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+exports.assign = assign;
+
 var _mobx = require('mobx');
 
 var _ViewModel = require('./ViewModel');
@@ -45,6 +47,11 @@ var Model = function () {
     key: 'process',
     value: function process(data) {
       return data;
+    }
+  }, {
+    key: 'createViewModel',
+    value: function createViewModel() {
+      return new _ViewModel2.default(null, this);
     }
   }]);
 
@@ -184,7 +191,7 @@ var Model = function () {
   }, {
     key: 'viewModel',
     value: function viewModel() {
-      if (!this._viewModel) this._viewModel = new _ViewModel2.default(this);
+      if (!this._viewModel) this._viewModel = new _ViewModel2.default(this, null);
       return this._viewModel;
     }
   }, {
@@ -216,7 +223,13 @@ var Model = function () {
 Model.nestedStores = {};
 Model.fields = [];
 exports.default = Model;
-
+function assign(model, values) {
+  if (model.assign) {
+    model.assign(values);
+  } else {
+    Object.assign(model, values);
+  }
+}
 
 function isArray(item) {
   return Object.prototype.toString.call(item) === '[object Array]';

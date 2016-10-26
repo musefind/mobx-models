@@ -84,7 +84,7 @@ var Store = function () {
 
       var obj = this.objects.get(params.id);
       if (obj) {
-        obj.assign(params);
+        (0, _Model.assign)(obj, params);
       } else {
         if (!(obj instanceof this.object)) {
           obj = new this.object(params);

@@ -10,6 +10,10 @@ export default class Model {
   
   static process(data) { return data }
   
+  static createViewModel() {
+    return new ViewModel(null, this)
+  }
+  
   id
   _oid = null
   _loaded = observable(false)
@@ -137,7 +141,7 @@ export default class Model {
   }
   
   viewModel() {
-    if (!this._viewModel) this._viewModel = new ViewModel(this);
+    if (!this._viewModel) this._viewModel = new ViewModel(this, null);
     return this._viewModel
   }
 
@@ -159,6 +163,14 @@ export default class Model {
     return State[this.constructor.name]
   }
 
+}
+
+export function assign(model, values) {
+  if (model.assign) {
+    model.assign(values)
+  } else {
+    Object.assign(model, values)
+  }
 }
 
 function isArray(item) {

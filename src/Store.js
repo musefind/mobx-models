@@ -1,5 +1,5 @@
 import { toJS, observable, action, asMap } from 'mobx'
-import Model from './Model'
+import Model, { assign } from './Model'
 
 export const State = {
   toJS() {
@@ -57,7 +57,7 @@ export default class Store {
     
     let obj = this.objects.get(params.id)
     if (obj) {
-      obj.assign(params)
+      assign(obj, params)
     } else {
       if (!(obj instanceof this.object)) {
         obj = new this.object(params)
