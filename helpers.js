@@ -23,3 +23,18 @@ var camelize = exports.camelize = function camelize(obj) {
   });
   return newObj;
 };
+
+var proxyTo = exports.proxyTo = function proxyTo(root, obj) {
+  Object.keys(obj).forEach(function (key) {
+    Object.defineProperty(root, key, {
+      enumerable: true,
+      configurable: true,
+      get: function get() {
+        return obj[key];
+      },
+      set: function set(val) {
+        return obj[key] = val;
+      }
+    });
+  });
+};

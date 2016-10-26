@@ -19,3 +19,18 @@ export const camelize = (obj) => {
   })
   return newObj
 }
+
+export const proxyTo = (root, obj) => {
+  Object.keys(obj).forEach(key => {
+    Object.defineProperty(root, key, {
+      enumerable: true,
+      configurable: true,
+      get: () => {
+        return obj[key]
+      },
+      set: (val) => {
+        return obj[key] = val
+      }
+    })
+  })
+}

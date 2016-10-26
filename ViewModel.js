@@ -8,45 +8,42 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _mobx = require('mobx');
 
+var _helpers = require('./helpers');
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var ViewModel = function () {
-  function ViewModel(model, validator) {
+  function ViewModel(model) {
     var _this = this;
 
     _classCallCheck(this, ViewModel);
 
     this.data = {};
-
-    var data = model.data || (0, _mobx.toJS)(model);
-    this.model = model;
-    this.validator = validator;
-
-    Object.keys(data).forEach(function (key) {
-      Object.defineProperty(_this, key, {
-        enumerable: true,
-        configurable: true,
-        get: (0, _mobx.action)(function () {
-          return _this.data[key];
-        }),
-        set: (0, _mobx.action)(function (value) {
-          _this.data[key] = value;
-        })
-      });
+    this.set = (0, _mobx.action)(function (key, val) {
+      _this.data[key] = val;
     });
 
-    (0, _mobx.extendObservable)(this.data, this.model.data || (0, _mobx.toJS)(this.model));
+    this.model = model;
+    (0, _mobx.extendObservable)(this.data, this.original);
+    (0, _helpers.proxyTo)(this, this.data);
   }
 
   _createClass(ViewModel, [{
     key: 'validate',
     value: function validate() {
-      if (this.validator) return this.validator(this.data);
       return true;
     }
   }, {
     key: 'commit',
     value: function commit() {
+      if (!this.validate()) return false;
+
+      this.force();
+      return true;
+    }
+  }, {
+    key: 'force',
+    value: function force() {
       if (this.model.assign) {
         this.model.assign((0, _mobx.toJS)(this.data));
       } else {
@@ -56,7 +53,12 @@ var ViewModel = function () {
   }, {
     key: 'reset',
     value: function reset() {
-      Object.assign(this.data, this.model.data || (0, _mobx.toJS)(this.model));
+      Object.assign(this.data, this.original);
+    }
+  }, {
+    key: 'original',
+    get: function get() {
+      return this.model.data || (0, _mobx.toJS)(this.model);
     }
   }]);
 

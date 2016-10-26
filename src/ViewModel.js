@@ -1,46 +1,67 @@
 import { toJS, extendObservable, action } from 'mobx'
+import { proxyTo } from './helpers'
 
 export default class ViewModel {
+  modelClass
   model
-  validator
+  errors
   data = {}
 
-  constructor(model, validator) {
-    const data = model.data || toJS(model)
-    this.model = model
-    this.validator = validator
+  constructor(opts) {
+    this.model = opts.model
+    this.modelClass = opts.modelClass
 
-    Object.keys(data).forEach(key => {
-      Object.defineProperty(this, key, {
-        enumerable: true,
-        configurable: true,
-        get: action(() => {
-          return this.data[key]
-        }),
-        set: action((value) => {
-          this.data[key] = value
-        }),
-      })
+    extendObservable(this, {
+      errors: []
     })
-
-    extendObservable(this.data, this.model.data || toJS(this.model))
+    
+    extendObservable(this.data, this.original)
+    proxyTo(this, this.data)
   }
 
-  validate() {
-    if (this.validator) return this.validator(this.data);
-    return true
-  }
+  set = action((key, val) => {
+    this.onSet(key, val)
+    this.data[key] = val
+  })
+
+  onSet(key, val) {}
+
+  validate() { return true }
   
   commit() {
+    if (!this.validate()) return false;
+
+    this.force()
+    return true
+  }
+
+  create() {
+    if (!this.modelClass) {
+      throw new Error("When creating from a ViewModel a modelClass must be provided.")
+    }
+
+    this.model = new this.modelClass()
+    if (this.commit()) {
+      return this.model
+    }
+
+    return null
+  }
+  
+  force() {
     if (this.model.assign) {
       this.model.assign(toJS(this.data))
     } else {
       Object.assign(this.model, toJS(this.data))
     }
   }
-  
+
+  get original() {
+    return this.model.data || toJS(this.model)
+  }
+
   reset() {
-    Object.assign(this.data, this.model.data || toJS(this.model))
+    Object.assign(this.data, this.original)
   }
 
 }
