@@ -80,6 +80,7 @@ var Store = function () {
   }, {
     key: 'findOrInitialize',
     value: function findOrInitialize(params) {
+      params = (0, _mobx.toJS)(params || {});
       if (!params.id) {
         return null;
       }

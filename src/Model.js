@@ -46,15 +46,14 @@ export default class Model {
     })
     
     extendObservable(this, data)
+    this.initialize(data)
   }
 
-  process(data) {
-    return data
-  }
+  process(data) { return data }
+  initialize(data) {}
   
   assign(data) {
     data = this.process(data || {})
-    console.log('assign', data)
     assignObservables(this, data)
   }
   

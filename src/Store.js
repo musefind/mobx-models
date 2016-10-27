@@ -52,6 +52,8 @@ export default class Store {
   }
 
   findOrInitialize(params) {
+    params = toJS(params || {})
+    
     if (!params.id) {
       return null
     }

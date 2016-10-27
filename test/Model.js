@@ -71,10 +71,8 @@ describe('Model', () => {
   
   it('should trigger a reaction by assigning', (done) => {
     class Test extends MobxModel.Model {
-      process(data) {
-        if (data.test && (!this.test || this.test.constructor.name !== 'Test')) {
-          data.test = TestStore.findOrInitialize(data.test)
-        }
+      initialize(data) {
+        this.test = TestStore.findOrInitialize(data.test)
         return data
       }
     }

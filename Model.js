@@ -68,6 +68,7 @@ var Model = function () {
     });
 
     (0, _mobx.extendObservable)(this, data);
+    this.initialize(data);
   }
 
   _createClass(Model, [{
@@ -76,10 +77,12 @@ var Model = function () {
       return data;
     }
   }, {
+    key: 'initialize',
+    value: function initialize(data) {}
+  }, {
     key: 'assign',
     value: function assign(data) {
       data = this.process(data || {});
-      console.log('assign', data);
       (0, _helpers.assignObservables)(this, data);
     }
   }, {
