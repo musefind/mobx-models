@@ -10,8 +10,6 @@ var _mobx = require('mobx');
 
 var _helpers = require('./helpers');
 
-var _Model = require('./Model');
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var ViewModel = function () {
@@ -29,11 +27,15 @@ var ViewModel = function () {
     this.model = model;
     this.modelClass = modelClass;
 
+    // Add in an observable errors object, to use as you like.
     (0, _mobx.extendObservable)(this, {
-      errors: []
+      errors: {}
     });
 
+    // extends the data object as an observable
     (0, _mobx.extendObservable)(this.data, this.original);
+
+    // proxy all the methods to this instance, makes it easier to work with
     (0, _helpers.proxyTo)(this, this.data);
   }
 
@@ -50,7 +52,7 @@ var ViewModel = function () {
     value: function commit() {
       if (!this.validate()) return false;
 
-      (0, _Model.assign)(this.model, (0, _mobx.toJS)(this.data));
+      (0, _helpers.assignObservables)(this.model, (0, _mobx.toJS)(this.data));
       return true;
     }
   }, {
@@ -70,7 +72,7 @@ var ViewModel = function () {
   }, {
     key: 'reset',
     value: function reset() {
-      Object.assign(this.data, this.original);
+      (0, _helpers.assignObservables)(this.data, this.original);
     }
   }, {
     key: 'original',

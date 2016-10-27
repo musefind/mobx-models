@@ -8,12 +8,12 @@ describe('ViewModel', () => {
   it('can set a property', () => {
     const instance = new MobxModel.Model({name: 'foo'})
     const vm = instance.viewModel()
-    
+
     vm.name = 'foobar'
 
     assert.equal(vm.name, 'foobar')
     assert.equal(instance.name, 'foo')
-    
+
     vm.reset()
 
     assert.equal(vm.name, 'foo')
@@ -29,8 +29,8 @@ describe('ViewModel', () => {
     assert.equal(vm.name, 'foobar')
     assert.equal(instance.name, 'foobar')
   })
-  
-  
+
+
   it('works with arrays', (done) => {
     const instance = new MobxModel.Model({names: ['foo']})
     const vm = instance.viewModel()
@@ -38,7 +38,7 @@ describe('ViewModel', () => {
     assert.notEqual(instance.names, vm.names)
 
     vm.names.push('bar')
-    
+
     assert.equal(instance.names[0], 'foo')
     assert.equal(instance.names[1], undefined)
     assert.equal(vm.names[0], 'foo')
@@ -54,27 +54,27 @@ describe('ViewModel', () => {
     assert.notEqual(instance.names, vm.names)
 
     vm.names.push('bar')
-    
+
     assertReacts(instance, 'names', done, () => {
       vm.commit()
     })
   })
-  
+
   it('works with objects', (done) => {
     const instance = new MobxModel.Model({names: {a: 'b', c: 'd'}})
     const vm = instance.viewModel()
 
     assert.notEqual(instance.names, vm.names)
-    
+
     vm.names.a = 'foo'
-    
+
     assert.equal(vm.names.a, 'foo')
     assert.equal(instance.names.a, 'b')
 
-    assertReacts(instance, 'names', done, () => {
+    assertReacts(instance.names, 'a', done, () => {
       vm.commit()
       assert.equal(instance.names.a, 'foo')
     })
   })
-  
+
 })

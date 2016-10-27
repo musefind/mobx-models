@@ -3,6 +3,12 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.isObject = exports.isArray = exports.assignObservables = exports.proxyTo = exports.camelize = undefined;
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _mobx = require('mobx');
+
 var camelize = exports.camelize = function camelize(obj) {
   var newObj = {};
   Object.keys(obj).forEach(function (key) {
@@ -37,4 +43,52 @@ var proxyTo = exports.proxyTo = function proxyTo(root, obj) {
       }
     });
   });
+};
+
+var assignObservables = exports.assignObservables = (0, _mobx.action)(function (root, obj) {
+  obj = (0, _mobx.toJS)(obj);
+
+  Object.keys(obj).forEach(function (key) {
+    var source = obj[key];
+    var destination = root[key];
+
+    if (!destination) {
+      root[key] = source;
+      return;
+    }
+
+    if (destination.assign) {
+      destination.assign(source);
+      return;
+    }
+
+    if ((0, _mobx.isObservableArray)(destination)) {
+      // destination.replace(source)
+      root[key] = source;
+      return;
+    }
+
+    if ((0, _mobx.isObservableMap)(destination)) {
+      // destination.clear()
+      destination.merge(source);
+      return;
+    }
+
+    if (isObject(destination) && isObject(source)) {
+      Object.keys(source).forEach(function (key) {
+        destination[key] = source[key];
+      });
+      return;
+    }
+
+    root[key] = source;
+  });
+});
+
+var isArray = exports.isArray = function isArray(item) {
+  return Object.prototype.toString.call(item) === '[object Array]';
+};
+
+var isObject = exports.isObject = function isObject(item) {
+  return (typeof item === 'undefined' ? 'undefined' : _typeof(item)) === 'object' && item !== null;
 };

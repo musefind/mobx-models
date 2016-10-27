@@ -1,5 +1,6 @@
 import { toJS, observable, action, asMap } from 'mobx'
-import Model, { assign } from './Model'
+import Model from './Model'
+import { assignObservables } from './helpers'
 
 export const State = {
   toJS() {
@@ -26,8 +27,8 @@ export default class Store {
     // initialize this in the global State object, this contains all objects
     State[object.name] = this
 
-    this.findOrInitialize = action(`${object.name}Store#findOrInitialize`, this.findOrInitialize)
-    this.remove = action(`${object.name}Store#remove`, this.remove)
+    this.findOrInitialize = action(`${object.name}Store#findOrInitialize`, this.findOrInitialize.bind(this))
+    this.remove = action(`${object.name}Store#remove`, this.remove.bind(this))
   }
 
   find(id) {
@@ -57,7 +58,7 @@ export default class Store {
     
     let obj = this.objects.get(params.id)
     if (obj) {
-      assign(obj, params)
+      assignObservables(obj, params)
     } else {
       if (!(obj instanceof this.object)) {
         obj = new this.object(params)

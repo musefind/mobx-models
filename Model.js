@@ -6,8 +6,6 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-exports.assign = assign;
-
 var _mobx = require('mobx');
 
 var _ViewModel = require('./ViewModel');
@@ -15,6 +13,8 @@ var _ViewModel = require('./ViewModel');
 var _ViewModel2 = _interopRequireDefault(_ViewModel);
 
 var _Store = require('./Store');
+
+var _helpers = require('./helpers');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -44,11 +44,6 @@ var Model = function () {
       return !this.loaded;
     }
   }], [{
-    key: 'process',
-    value: function process(data) {
-      return data;
-    }
-  }, {
     key: 'createViewModel',
     value: function createViewModel() {
       return new _ViewModel2.default(null, this);
@@ -56,85 +51,37 @@ var Model = function () {
   }]);
 
   function Model(data) {
-    var _this = this;
-
     _classCallCheck(this, Model);
 
     this._oid = null;
     this._loaded = (0, _mobx.observable)(false);
     this._viewModel = null;
 
-    data = (0, _mobx.toJS)(data || {});
-    data = this.constructor.process(data);
-
     this._oid = globalOid += 1;
 
-    // Loop through the data and replace each instance of a nested object, recognized through the nested
-    // stores object with the instances of that nested object. Handles arrays as well as singletons.
-    Object.keys(data).forEach(function (key) {
-      if (_this.constructor.nestedStores[key]) {
-        (function () {
-          var store = _this.constructor.nestedStores[key];
+    data = this.process(data || {});
 
-          if (isArray(data[key])) {
-            data[key] = data[key].map(function (val) {
-              return store.findOrInitialize(val);
-            });
-          } else {
-            data[key] = store.findOrInitialize(data[key]);
-          }
-        })();
-      }
-    });
+    if (!data.id) data.id = null;
 
-    // Ensure that the ID property exists.
-    if (!data.id) {
-      data.id = null;
-    }
-
-    // Initialize the fields to a null value. Essentially is an easier way of defining observables,
-    // especially if you don't have access to decorators.
     this.constructor.fields.forEach(function (field) {
-      if (data[field] === undefined) {
-        data[field] = null;
-      }
+      if (data[field] === undefined) data[field] = null;
     });
-
-    this.assign = (0, _mobx.action)(this.constructor.name + '.' + this._oid + '#assign', this.assign);
-
-    this.onAssign(data);
 
     (0, _mobx.extendObservable)(this, data);
   }
 
   _createClass(Model, [{
-    key: 'assign',
-    value: function assign(data) {
-      var _this2 = this;
-
-      data = data || {};
-      data = this.constructor.process(data);
-
-      this.onAssign(data);
-
-      // Loop through all of the items to assign. If there is are nested objects, meaning that the object
-      // has 'assign' defined, then we call this. Otherwise we just set the value.
-      // todo: should use Object#assign for Objects?
-      Object.keys(data).forEach(function (param) {
-
-        if (_this2[param] && _this2[param].assign) {
-          _this2[param].assign(data[param]);
-          return;
-        }
-
-        _this2[param] = data[param];
-      });
-
-      return this;
+    key: 'process',
+    value: function process(data) {
+      return data;
     }
   }, {
-    key: 'onAssign',
-    value: function onAssign() {}
+    key: 'assign',
+    value: function assign(data) {
+      data = this.process(data || {});
+      console.log('assign', data);
+      (0, _helpers.assignObservables)(this, data);
+    }
   }, {
     key: 'insert',
     value: function insert() {
@@ -153,10 +100,10 @@ var Model = function () {
   }, {
     key: 'delete',
     value: function _delete() {
-      var _this3 = this;
+      var _this = this;
 
       return this.destroy().then(function () {
-        _this3.store().remove(_this3.id);
+        _this.store().remove(_this.id);
       });
     }
   }, {
@@ -167,23 +114,23 @@ var Model = function () {
   }, {
     key: 'load',
     value: function load() {
-      var _this4 = this;
+      var _this2 = this;
 
       return this.retrieve().then(function (data) {
-        _this4.assign(data);
-        _this4.setLoaded();
+        _this2.assign(data);
+        _this2.setLoaded();
       });
     }
   }, {
     key: 'save',
     value: function save() {
-      var _this5 = this;
+      var _this3 = this;
 
       if (this.id) {
         return this.update();
       } else {
         return this.insert().then(function (res) {
-          _this5.store().findOrInitialize(_this5);
+          _this3.store().findOrInitialize(_this3);
           return res;
         });
       }
@@ -220,17 +167,5 @@ var Model = function () {
   return Model;
 }();
 
-Model.nestedStores = {};
 Model.fields = [];
 exports.default = Model;
-function assign(model, values) {
-  if (model.assign) {
-    model.assign(values);
-  } else {
-    Object.assign(model, values);
-  }
-}
-
-function isArray(item) {
-  return Object.prototype.toString.call(item) === '[object Array]';
-}

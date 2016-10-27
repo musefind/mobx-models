@@ -13,6 +13,8 @@ var _Model = require('./Model');
 
 var _Model2 = _interopRequireDefault(_Model);
 
+var _helpers = require('./helpers');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -45,8 +47,8 @@ var Store = function () {
     // initialize this in the global State object, this contains all objects
     State[object.name] = this;
 
-    this.findOrInitialize = (0, _mobx.action)(object.name + 'Store#findOrInitialize', this.findOrInitialize);
-    this.remove = (0, _mobx.action)(object.name + 'Store#remove', this.remove);
+    this.findOrInitialize = (0, _mobx.action)(object.name + 'Store#findOrInitialize', this.findOrInitialize.bind(this));
+    this.remove = (0, _mobx.action)(object.name + 'Store#remove', this.remove.bind(this));
   }
 
   _createClass(Store, [{
@@ -84,7 +86,7 @@ var Store = function () {
 
       var obj = this.objects.get(params.id);
       if (obj) {
-        (0, _Model.assign)(obj, params);
+        (0, _helpers.assignObservables)(obj, params);
       } else {
         if (!(obj instanceof this.object)) {
           obj = new this.object(params);

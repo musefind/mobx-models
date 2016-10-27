@@ -26,7 +26,7 @@ describe('Model', () => {
 
   it('should camelize properties', () => {
     class Test extends MobxModel.Model {
-      static process(data) {
+      process(data) {
         return camelize(data)
       }
     }
@@ -70,14 +70,19 @@ describe('Model', () => {
   })
   
   it('should trigger a reaction by assigning', (done) => {
-    class Test extends MobxModel.Model {}
-    
+    class Test extends MobxModel.Model {
+      process(data) {
+        if (data.test && (!this.test || this.test.constructor.name !== 'Test')) {
+          data.test = TestStore.findOrInitialize(data.test)
+        }
+        return data
+      }
+    }
+   
     const TestStore = new MobxModel.Store(Test)
-    Test.fields = ['id', 'testing', 'test']
-    Test.nestedStores.test = TestStore
-
+  
     const instance = new Test({testing: 'a', test: {id: 2, testing: 'a'}})
-    
+   
     assertReacts(instance.test, 'testing', done, () => {
       instance.assign({test: {testing: 'b'}})
     })

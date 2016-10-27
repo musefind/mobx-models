@@ -1,6 +1,7 @@
 const autorun = require('mobx').autorun
 const observe = require('mobx').observe
 const assert = require('assert')
+const mobx = require('mobx')
 
 const assertReacts = (instance, field, done, modify) => {
   let times = 0
@@ -12,7 +13,11 @@ const assertReacts = (instance, field, done, modify) => {
   })
 
   autorun(() => {
-    val = instance[field]
+    if (mobx.isObservableArray(instance[field])) {
+      val = instance[field][0]
+    } else {
+      val = instance[field]
+    }
     times++
   })
 

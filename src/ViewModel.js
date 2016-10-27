@@ -1,6 +1,5 @@
 import { toJS, extendObservable, action } from 'mobx'
-import { proxyTo } from './helpers'
-import { assign } from './Model'
+import { proxyTo, assignObservables } from './helpers'
 
 export default class ViewModel {
   modelClass
@@ -12,11 +11,15 @@ export default class ViewModel {
     this.model = model
     this.modelClass = modelClass
 
+    // Add in an observable errors object, to use as you like.
     extendObservable(this, {
-      errors: []
+      errors: {}
     })
     
+    // extends the data object as an observable
     extendObservable(this.data, this.original)
+    
+    // proxy all the methods to this instance, makes it easier to work with
     proxyTo(this, this.data)
   }
 
@@ -32,7 +35,7 @@ export default class ViewModel {
   commit() {
     if (!this.validate()) return false;
 
-    assign(this.model, toJS(this.data))
+    assignObservables(this.model, toJS(this.data))
     return true
   }
 
@@ -54,7 +57,7 @@ export default class ViewModel {
   }
 
   reset() {
-    Object.assign(this.data, this.original)
+    assignObservables(this.data, this.original)
   }
 
 }
