@@ -42,6 +42,7 @@ const collabSchema = new Schema(Collab, {
 // Get a list of collabs by using a collection.
 class CollabStore
   collabs = new Collection(() => {
+    // parse come's from the schema module, it parses data into the defined schema
     return api.get('/collabs').then(res => parse(res.collabs, collabSchema))
   })
 end
@@ -50,9 +51,14 @@ end
 // Putting it all together!
 const App = observer(({ collabs }) => (
   <div>
-    {collabs.map(collab => 
-      <div key={collab.id}>{collab.influencer.username}</div>
-    )}
+  
+    {
+      // Collection supports the commonly used Array functions. Additionally,
+      // it will ensure the data is loaded for you as you need it, magic!
+      collabs.map(collab => 
+        <div key={collab.id}>{collab.influencer.username}</div>
+      )
+    }
   </div>
 ))
 
