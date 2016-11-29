@@ -19,6 +19,7 @@ Check out the files for basic usage.
 - Can we generalize the model save and destroy?
 - Collections, storing as list of ID's or list of models.
 - Where to put collections and how to organize them.
+- View model's still need to be added.
 
 ### Overview
 
