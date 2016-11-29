@@ -9,7 +9,7 @@ const userSchema = new Schema(User)
 describe('Collection', () => {
 
   it('can load a collection', (done) => {
-    const collection = new Collection(User, () => {
+    const collection = new Collection(() => {
       const data = [
         { id: 1, name: 'test' },
         { id: 2, name: 'test2' },
@@ -22,11 +22,14 @@ describe('Collection', () => {
     collection.load().then(() => {
       assert.equal(3, collection.results.length)
       done()
+    }).catch(err => {
+      console.warn(err)
+      done(err)
     })
   })
 
   it('can load a collection dynamically', (done) => {
-    const collection = new Collection(User, () => {
+    const collection = new Collection(() => {
       const data = [
         { id: 1, name: 'test' },
         { id: 2, name: 'test2' },
