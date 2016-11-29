@@ -41,6 +41,7 @@ const collabSchema = new Schema(Collab, {
 
 // Get a list of collabs by using a collection.
 class CollabStore
+  // treat a collection like an observable array5
   collabs = new Collection(() => {
     // parse come's from the schema module, it parses data into the defined schema
     return api.get('/collabs').then(res => parse(res.collabs, collabSchema))
