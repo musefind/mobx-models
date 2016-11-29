@@ -8,6 +8,9 @@ const assign = Object.assign
 // - How to implement subscriptions for self updating
 // - Can we generalize save and destroy?
 export default class Model extends Base {
+  
+  static defaultAttributes = {}
+  
   id
 
   static initialize(data) {
@@ -18,12 +21,13 @@ export default class Model extends Base {
     let object = State[this.name][data.id]
 
     if (object) {
-      assign(object, data) // update the object if it exists already, important to maintain a single copy
+      assign(object, data)                                // update the object if it exists already
     } else if (data.id) {
-      object = extendObservable(new this(data), data) // create a new one
-      State[this.name][object.id] = object            // add it to the global state
+      data = Object.assign(data, this.defaultAttributes)  // add in defaults
+      object = extendObservable(new this(data), data)     // create a new one
+      State[this.name][object.id] = object                // add it to the global state
     } else {
-      object = extendObservable(new this(data), data) // create an 'untracked' model, won't be save in State cuz no ID.
+      object = extendObservable(new this(data), data)     // create an 'untracked' model, won't be save in State cuz no ID.
     }
 
     return object

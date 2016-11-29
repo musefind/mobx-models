@@ -14,12 +14,21 @@ Check out the files for basic usage.
 - First class support for using and working with forms
 - Opinionated structure
 
+#### Outstanding Questions / Ideas
+- How to implement subscriptions for self updating.
+- Can we generalize the model save and destroy?
+- Collections, storing as list of ID's or list of models.
+- Where to put collections and how to organize them.
+
 ### Overview
 
+TODO
 
 ### Example
 
 ```javascript
+import { Model, Collection, Schema, parse } from 'mobx-models'
+import { observer } from 'mobx'
 
 // Model layer
 class Collab extends Model {}
@@ -32,6 +41,7 @@ class SocialProfile extends Model {}
 const socialProfileSchema = new Schema(Influencer)
 
 const influencerSchema = new Schema(Influencer, {
+  // nested model's are declared here.
   socialProfile: socialProfileSchema, // schema should optionally handle camelizing
 })
 
@@ -41,7 +51,8 @@ const collabSchema = new Schema(Collab, {
 
 // Get a list of collabs by using a collection.
 class CollabStore
-  // treat a collection like an observable array5
+  // treat a collection like an observable array, except with an additional
+  // load function that will call argument provided.
   collabs = new Collection(() => {
     // parse come's from the schema module, it parses data into the defined schema
     return api.get('/collabs').then(res => parse(res.collabs, collabSchema))
