@@ -36,10 +36,16 @@ class Collab extends Model {}
 
 class Influencer extends Model {
   
+  // default values are implemented here
+  username
+  socialProfileId
+  name
+  
   set socialProfile(val) {
     this._socialProfile = val
   }
-
+  
+  // Social profile object is autoloaded here for us. This is optional.
   get socialProfile() {
     if (!this._socialProfile)
       this._socialProfile = SocialProfile.initializeAndLoad({id: this.socialProfileId});
@@ -50,7 +56,8 @@ class Influencer extends Model {
 
 class SocialProfile extends Model {}
 
-// Schema's
+
+// Schema's:
 const socialProfileSchema = new Schema(Influencer)
 
 const influencerSchema = new Schema(Influencer, {
@@ -62,15 +69,19 @@ const collabSchema = new Schema(Collab, {
   influencer: influencerSchema,
 })
 
-// Get a list of collabs by using a collection.
+
+// Stores:
 class CollabStore {
   
-  // treat a collection like an observable array.
+  // Get a list of collabs by using a collection. treat a collection like 
+  // an observable array.
   collabs = new Collection(() => {
     // parse come's from the schema module, it parses data into the defined schema
     return api.get('/collabs').then(res => parse(res.collabs, collabSchema))
   })
   
+  // Current variables should be always implemented using id's and not
+  // using the object itself.
   @observable currentCollabId = null
   
   @computed get currentCollab() {
@@ -82,8 +93,13 @@ class CollabStore {
     }
   }
   
+  // This is an optional variable for 'new' models instantiated with forms.
+  @observable newCollab = null
+  
 }
 
+
+// What the router functions will look like:
 route('/collabs/:id', (collabId) => {
   CollabStore.currentCollabId = collabId
 })
@@ -91,6 +107,7 @@ route('/collabs/:id', (collabId) => {
 route('/collabs', () => {
   CollabStore.collabs.load()
 })
+
 
 // Putting it all together!
 const App = observer(({ collabs }) => (
