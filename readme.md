@@ -74,7 +74,12 @@ class CollabStore {
   @observable currentCollabId = null
   
   @computed get currentCollab() {
-    return Collab.initializeAndLoad({id: this.currentCollabId})
+    if (this.currentCollabId === null || this.currentCollabId === undefined) {
+      // implementation choice here, either return (and cache) a new instance
+      // or return null.
+    } else {
+      return Collab.initializeAndLoad({id: this.currentCollabId})    
+    }
   }
   
 }
