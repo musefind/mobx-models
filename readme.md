@@ -34,7 +34,13 @@ import { observer } from 'mobx'
 // Model layer
 class Collab extends Model {}
 
-class Influencer extends Model {}
+class Influencer extends Model {
+
+  get socialProfile() {
+    if (!this._socialProfile) this._socialProfile = SocialProfile.initializeAndLoad({id: this.socialProfileId})
+    return this._socialProfile
+  }
+}
 
 class SocialProfile extends Model {}
 
