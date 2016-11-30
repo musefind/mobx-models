@@ -28,7 +28,11 @@ export default class ViewModel {
     if (!this.validate()) return false;
     
     assign(this.model, toJS(this.data))
-    return this.model.save()
+    return true
+  }
+
+  commitAndSave() {
+    if (this.commit()) return this.model.save();
   }
 
   // Original data.
