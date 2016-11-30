@@ -28,7 +28,7 @@ export default class ViewModel {
     if (!this.validate()) return false;
     
     assign(this.model, toJS(this.data))
-    return true
+    return this.model.save()
   }
 
   // Original data.

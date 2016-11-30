@@ -118,6 +118,14 @@ route('/collabs', () => {
 })
 
 
+// View Model
+class InfluencerViewModel extends ViewModel {}
+
+const vm = new InfluencerViewModel(influencerInstance)
+
+vm.name = 'new name'
+vm.commit()
+
 // Putting it all together!
 const App = observer(({ collabs }) => (
   <div>
