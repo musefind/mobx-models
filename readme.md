@@ -63,7 +63,11 @@ class CollabStore {
 
 
 route('/collabs/:id', (collabId) => {
-  CollabStore.currentCollab = Collab.initialize({id: collabId}).load()
+  CollabStore.currentCollab = Collab.initializeAndLoad({id: collabId})
+})
+
+route('/collabs', () => {
+  CollabStore.collabs.load()
 })
 
 // Putting it all together!
