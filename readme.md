@@ -15,11 +15,11 @@ Check out the files for basic usage.
 - Opinionated structure
 
 #### Outstanding Questions / Ideas
-- How to implement subscriptions for self updating.
-- Can we generalize the model save and destroy?
-- Collections, storing as list of ID's or list of models.
-- Where to put collections and how to organize them.
-- View model's still need to be added.
+[ ] How to implement subscriptions for self updating.
+[ ] Can we generalize the model save and destroy?
+[x] Collections, storing as list of ID's or list of models. (in stores)
+[x] Where to put collections and how to organize them. (in models)
+[x] View model's still need to be added. (added)
 
 ### Overview
 
