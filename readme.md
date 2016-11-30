@@ -52,6 +52,15 @@ class Influencer extends Model {
     return this._socialProfile
   }
   
+  // how retrieve should be implemented
+  retrieve() {
+    return api.get(`/social_profiles/${this.id}`, (res) => {
+      const data = socialProfileSchema.parseRaw(res.socialProfile)
+      Object.assign(this, data)
+      return this
+    })
+  }
+  
 }
 
 class SocialProfile extends Model {}
