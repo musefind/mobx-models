@@ -41,7 +41,8 @@ class Influencer extends Model {
   }
 
   get socialProfile() {
-    if (!this._socialProfile) this._socialProfile = SocialProfile.initializeAndLoad({id: this.socialProfileId})
+    if (!this._socialProfile)
+      this._socialProfile = SocialProfile.initializeAndLoad({id: this.socialProfileId});
     return this._socialProfile
   }
   
@@ -70,6 +71,10 @@ class CollabStore {
   })
   
   @observable currentCollab = null
+  
+  setCurrentCollabById(collabId) {
+    this.currentCollab = Collab.initializeAndLoad({id: collabId})
+  }
 }
 
 
