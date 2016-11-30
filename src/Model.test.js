@@ -37,4 +37,14 @@ describe('Model', () => {
     assert(isObservable(user, 'name'))
   })
   
+  // todo: should this test pass?
+  // it('assigns a default value as an observable', () => {
+  //   class TestModel extends Model {
+  //     name
+  //   }
+  //
+  //   const instance = TestModel.initialize({id: 1})
+  //   assert(isObservable(instance, 'name'))
+  // })
+  
 })
