@@ -74,13 +74,13 @@ class CollabStore {
   @observable currentCollabId = null
   
   @computed get currentCollab() {
-    return Collab.initializeAndLoad({id: collabId})
+    return Collab.initializeAndLoad({id: this.currentCollabId})
   }
   
 }
 
 route('/collabs/:id', (collabId) => {
-  CollabStore.currentCollab = Collab.initializeAndLoad({id: collabId})
+  CollabStore.currentCollabId = collabId
 })
 
 route('/collabs', () => {
