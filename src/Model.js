@@ -8,9 +8,6 @@ const assign = Object.assign
 // - How to implement subscriptions for self updating
 // - Can we generalize save and destroy?
 export default class Model extends Base {
-  
-  static defaultAttributes = {}
-  
   id
 
   static initialize(data) {
@@ -23,7 +20,6 @@ export default class Model extends Base {
     if (object) {
       assign(object, data)                                // update the object if it exists already
     } else if (data.id) {
-      data = Object.assign(data, this.defaultAttributes)  // add in defaults
       object = extendObservable(new this(data), data)     // create a new one
       State[this.name][object.id] = object                // add it to the global state
     } else {
@@ -32,7 +28,16 @@ export default class Model extends Base {
 
     return object
   }
-
+  
+  static initializeAndLoad(data) {
+    if (!data.id) 
+      throw new Error("initializeAndLoad must be called with an id");
+    
+    const object = this.initialize(data)
+    object.load()
+    return object
+  }
+  
   // common methods to implement
   retrieve() { return Promise.reject('Not Implemented') }
   
@@ -44,11 +49,12 @@ export default class Model extends Base {
 
   // load will call retrieve and then setLoaded
   load(force) {
-    if (this.loaded && !force) return;
+    if (this.loaded && !force) Promise.resolve(this);
 
-    return this.retrieve().then(res => {
+    this.setLoading()
+    return this.retrieve().then(() => {
       this.setLoaded()
-      return res
+      return this
     })
   }
   

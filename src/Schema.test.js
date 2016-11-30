@@ -52,7 +52,7 @@ describe('Schema', () => {
     assert.equal(res.author.constructor.name, 'Author')
     assert(isObservable(res.author, 'id'))
   })
-
+  
   it('can parse a list', () => {
     const data = {
       blogs: [
@@ -82,9 +82,32 @@ describe('Schema', () => {
       blogs: blogSchema.asArray(),
     })
 
+    // alternative api
+    const res2 = blogSchema.asArray().parse(data.blogs)
+    
     assert.equal(res[0].author.constructor.name, 'Author')
     assert(isObservable(res[0].author, 'id'))
     assert(res.length === 2)
+
+    assert.equal(res2[0].author.constructor.name, 'Author')
+    assert(isObservable(res2[0].author, 'id'))
+    assert(res2.length === 2)
+  })
+
+  it('parses a raw single object', () => {
+    const data = {
+      id: 1,
+      title: 'test',
+      content: 'blog',
+      author: {
+        id: 1,
+        name: 'author',
+      }
+    }
+    
+    const raw = blogSchema.parseRaw(data)
+    assert.equal('Object', raw.constructor.name)
+    assert.equal(raw.author.constructor.name, 'Author')
   })
   
 })

@@ -14,7 +14,6 @@ import Base from './Base'
 // ```
 export default class Collection extends Base {
   _results = observable([])
-  _locked = false
   loader
 
   constructor(loader) {
@@ -74,27 +73,23 @@ export default class Collection extends Base {
 
   load(force) {
     return new Promise((resolve, reject) => {
-      if (this._locked) {
+      
+      // ensure we don't double load
+      if (this.loading) {
         return resolve(this._results)
       }
       
       if (this.loaded && !force) {
         return resolve(this._results)
       }
-
-      this._locked = true
+      
+      this.setLoading()
       this.loader()
         .then(results => {
           this._results.replace(results)
           
           this.setLoaded()
-          this._locked = false
           resolve(this._results)
-        })
-        .catch((err) => {
-          console.warn("Error while loading query", err)
-          this._locked = false
-          reject(err)
         })
     })
   }

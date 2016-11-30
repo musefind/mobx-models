@@ -33,18 +33,43 @@ export default class Schema {
     this.schema = schema || {}
   }
 
+  /**
+   * Parses a model and initializes it.
+   * @param data
+   * @returns {*}
+   */
   parse(data) {
+    if (data.constructor === Array) {
+      return data.map(item => this.parse(item))
+    } else {
+      return this.model.initialize(this._parse(data))
+    }
+  }
+
+  /**
+   * Parses the data given without initializing it in a model.
+   * @param data
+   * @returns {*}
+   */
+  parseRaw(data) {
+    if (data.constructor === Array) {
+      return data.map(item => this.parseRaw(item))
+    } else {
+      return this._parse(data)
+    }
+  }
+  
+  _parse(data) {
     Object.keys(this.schema).forEach(key => {
       if (this.schema[key].schemaClass && data[key]) {
         data[key] = this.schema[key].parse(data[key])
       } else {
-        data[key] = this.schema[key] // set a raw schema
+        data[key] = this.schema[key] // set a raw element
       }
     })
-
-    return this.model.initialize(data)
+    return data
   }
-
+  
   asArray() {
     this.schemaArray = true
     return this

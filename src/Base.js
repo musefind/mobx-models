@@ -2,29 +2,32 @@ import { observable, toJS } from 'mobx'
 
 export default class Base {
   _loaded = observable(false)
+  _loading = observable(false)
 
   get loaded() {
     return this._loaded.get()
   }
 
-  get loading() {
-    return !this.loaded
-  }
-
-  set loading(val) {
-    this._loaded.set(!val)
-  }
-
   set loaded(val) {
     this._loaded.set(!!val)
+    if (this.loaded) this._loading.set(false);
   }
 
   setLoaded() {
     this._loaded.set(true)
+    this._loading.set(false)
+  }
+
+  get loading() {
+    return this._loading.get()
+  }
+
+  set loading(val) {
+    this._loading.set(!!val)
   }
 
   setLoading() {
-    this._loaded.set(false)
+    this._loading.set(true)
   }
 
   load() {}
