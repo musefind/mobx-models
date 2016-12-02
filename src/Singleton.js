@@ -36,7 +36,10 @@ export default class Singleton extends Base {
     Object.keys(model).forEach(key => {
       if (key !== '_loaded' && key !== '_loading') {
         Object.defineProperty(this, key, {
-          get: function() { return this._results[key] },
+          get: function() { 
+            this.load()
+            return this._results[key] 
+          },
           set: function(value) { this._results[key] = value }
         })
       }
