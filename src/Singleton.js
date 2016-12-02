@@ -32,7 +32,7 @@ export default class Singleton extends Base {
     this._results[attribute] = newValue
   }
 
-  assignGetters(model) {
+  assignGettersAndSetters(model) {
     Object.keys(model).forEach(key => {
       if (key !== '_loaded' && key !== '_loading') {
         Object.defineProperty(this, key, {
@@ -59,7 +59,7 @@ export default class Singleton extends Base {
       this.loader()
         .then(results => {
           extendObservable(this._results, toJS(results))
-          this.assignGetters(results)
+          this.assignGettersAndSetters(results)
           
           this.setLoaded()
           resolve(this._results)
