@@ -1,4 +1,4 @@
-import { observable, extendObservable, toJS } from 'mobx'
+import { observable } from 'mobx'
 import Base from './Base'
 
 export default class Singleton extends Base {
@@ -61,7 +61,7 @@ export default class Singleton extends Base {
       this.setLoading()
       this.loader()
         .then(results => {
-          extendObservable(this._results, toJS(results))
+          this._results = results
           this.assignGettersAndSetters(results)
           
           this.setLoaded()
