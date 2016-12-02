@@ -1,17 +1,6 @@
 import { observable, extendObservable, toJS } from 'mobx'
 import Base from './Base'
 
-// Questions:
-// - storing results array, as list of ID's or as list of objects
-// - where to put collections
-// - subscriptions to updates
-//
-// Basic Usage:
-// - will autoload users based on the provided function.
-// ```
-// const users = new Collection(() => api.loadUsers())
-// users.map(users => user)
-// ```
 export default class Singleton extends Base {
   _results = observable({})
   loader
