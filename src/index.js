@@ -4,4 +4,6 @@ module.exports = {
   Model: require('./Model').default,
   Schema: require('./Schema').default,
   ViewModel: require('./ViewModel').default,
+  parse: require('./Schema').parse,
+  Singleton: require('./Singleton').default
 }
