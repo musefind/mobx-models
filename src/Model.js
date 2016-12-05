@@ -49,7 +49,6 @@ export default class Model extends Base {
   load(force) {
     if (this.loaded && !force) Promise.resolve(this);
 
-    this.setLoading()
     return this.retrieve().then(() => {
       this.setLoaded()
       return this
