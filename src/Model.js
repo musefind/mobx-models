@@ -2,7 +2,6 @@ import { extendObservable } from 'mobx'
 import Base from './Base'
 
 export const State = {}
-const assign = Object.assign
 
 // Questions
 // - How to implement subscriptions for self updating
@@ -16,14 +15,13 @@ export default class Model extends Base {
 
     // try and find the object
     let object = State[this.name][data.id]
-
-    if (object) {
-      assign(object, data)                                // update the object if it exists already
-    } else if (data.id) {
-      object = extendObservable(new this(data), data)     // create a new one
-      State[this.name][object.id] = object                // add it to the global state
-    } else {
-      object = extendObservable(new this(data), data)     // create an 'untracked' model, won't be save in State cuz no ID.
+    if (!object) {
+      if (data.id) {
+        object = extendObservable(new this(data), data)     // create a new one
+        State[this.name][object.id] = object                // add it to the global state
+      } else {
+        object = extendObservable(new this(data), data)     // create an 'untracked' model, won't be save in State cuz no ID.
+      }
     }
 
     return object
