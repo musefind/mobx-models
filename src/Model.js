@@ -13,11 +13,11 @@ export default class Model extends Base {
   static initialize(data) {
     // if this is a User model, it's instances will be a State.User[id]
     if (!State[this.name]) State[this.name] = {};
-
     // try and find the object
     let object = State[this.name][data.id]
-
-    if (object) {
+    if (object && object.loading) {
+      return object
+    } else if (object) {
       assign(object, data)                                // update the object if it exists already
     } else if (data.id) {
       object = extendObservable(new this(data), data)     // create a new one
@@ -32,7 +32,6 @@ export default class Model extends Base {
   static initializeAndLoad(data) {
     if (!data.id) 
       throw new Error("initializeAndLoad must be called with an id");
-    
     const object = this.initialize(data)
     object.load()
     return object
