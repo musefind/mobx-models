@@ -35,6 +35,10 @@ export default class Collection extends Base {
     return this._results.length
   }
 
+  empty() {
+    this._results = observable([])
+  }
+
   map(fn) {
     return this.results.map(fn)
   }
