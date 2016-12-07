@@ -39,7 +39,7 @@ export default class Schema {
    * @returns {*}
    */
   parse(data) {
-    if (data.constructor === Array) {
+    if (data && data.constructor === Array) {
       return data.map(item => this.parse(item))
     } else {
       return this.model.initialize(this._parse(data))
@@ -61,8 +61,12 @@ export default class Schema {
   
   _parse(data) {
     Object.keys(this.schema).forEach(key => {
-      if (this.schema[key].schemaClass && data[key]) {
-        data[key] = this.schema[key].parse(data[key])
+      if (this.schema[key].schemaClass) {
+        if (data[key]) {
+          data[key] = this.schema[key].parse(data[key])
+        } else {
+          data[key] = this.schema[key].parse({})
+        }
       } else {
         data[key] = this.schema[key] // set a raw element
       }

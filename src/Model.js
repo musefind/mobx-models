@@ -2,6 +2,7 @@ import { extendObservable } from 'mobx'
 import Base from './Base'
 
 export const State = {}
+const assign = Object.assign
 
 // Questions
 // - How to implement subscriptions for self updating
@@ -12,16 +13,17 @@ export default class Model extends Base {
   static initialize(data) {
     // if this is a User model, it's instances will be a State.User[id]
     if (!State[this.name]) State[this.name] = {};
-
     // try and find the object
     let object = State[this.name][data.id]
-    if (!object) {
-      if (data.id) {
-        object = extendObservable(new this(data), data)     // create a new one
-        State[this.name][object.id] = object                // add it to the global state
-      } else {
-        object = extendObservable(new this(data), data)     // create an 'untracked' model, won't be save in State cuz no ID.
-      }
+    if (object && object.loading) {
+      return object
+    } else if (object) {
+      assign(object, data)                                // update the object if it exists already
+    } else if (data.id) {
+      object = extendObservable(new this(data), data)     // create a new one
+      State[this.name][object.id] = object                // add it to the global state
+    } else {
+      object = extendObservable(new this(data), data)     // create an 'untracked' model, won't be save in State cuz no ID.
     }
 
     return object
@@ -30,7 +32,6 @@ export default class Model extends Base {
   static initializeAndLoad(data) {
     if (!data.id) 
       throw new Error("initializeAndLoad must be called with an id");
-    
     const object = this.initialize(data)
     object.load()
     return object
@@ -49,6 +50,7 @@ export default class Model extends Base {
   load(force) {
     if (this.loaded && !force) Promise.resolve(this);
 
+    this.setLoading()
     return this.retrieve().then(() => {
       this.setLoaded()
       return this
