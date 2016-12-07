@@ -10,11 +10,12 @@ const assign = Object.assign
 export default class Model extends Base {
   id
 
-  static initialize(data) {
+  static initialize(rawData) {
     // if this is a User model, it's instances will be a State.User[id]
     if (!State[this.name]) State[this.name] = {};
     // try and find the object
-    let object = State[this.name][data.id]
+    let object = State[this.name][rawData.id]
+    const data = this.processData(rawData)
     if (object && object.loading) {
       return object
     } else if (object) {
@@ -35,6 +36,10 @@ export default class Model extends Base {
     const object = this.initialize(data)
     object.load()
     return object
+  }
+
+  static processData(raw) {
+    return raw
   }
   
   // common methods to implement
