@@ -1,5 +1,6 @@
 import { observable } from 'mobx'
 import Base from './Base'
+import LoadDispatch from './LoadDispatch'
 
 // Questions:
 // - storing results array, as list of ID's or as list of objects
@@ -27,7 +28,7 @@ export default class Collection extends Base {
   }
 
   get results() {
-    this.load()
+    LoadDispatch.registerLoader(this.load.bind(this))
     return this._results
   }
 
