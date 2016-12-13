@@ -27,6 +27,16 @@ export default class Collection extends Base {
     }
   }
 
+  get loaded() {
+    LoadDispatch.registerLoader(this.load.bind(this))
+    return this._loaded.get()
+  }
+
+  get loading() {
+    LoadDispatch.registerLoader(this.load.bind(this))
+    return this._loading.get()
+  }
+
   get results() {
     LoadDispatch.registerLoader(this.load.bind(this))
     return this._results
@@ -43,7 +53,7 @@ export default class Collection extends Base {
   map(fn) {
     return this.results.map(fn)
   }
-
+  
   forEach(fn) {
     return this.results.forEach(fn)
   }
@@ -87,7 +97,8 @@ export default class Collection extends Base {
       if (this.loaded && !force) {
         return resolve(this._results)
       }
-      
+
+
       this.setLoading()
       this.loader()
         .then(results => {
