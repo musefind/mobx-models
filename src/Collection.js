@@ -44,6 +44,10 @@ export default class Collection extends Base {
     return this.results.map(fn)
   }
 
+  get first() {
+    return this.results[0]
+  }
+
   forEach(fn) {
     return this.results.forEach(fn)
   }
