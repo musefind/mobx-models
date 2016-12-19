@@ -53,7 +53,11 @@ export default class Collection extends Base {
   map(fn) {
     return this.results.map(fn)
   }
-  
+
+  get first() {
+    return this.results[0]
+  }
+
   forEach(fn) {
     return this.results.forEach(fn)
   }
