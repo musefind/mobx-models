@@ -3,9 +3,15 @@ class LoadDispatch {
   _listening = false
 
   callLoaders() {
-    this._loaders.forEach(fn => {
-      fn()
-    })
+    this._loaders.forEach(fn => fn())
+  }
+
+  callLoadersAsync() {
+    // this is an 'async' version of call loaders, it sticks the function on
+    // the back of the queue by using setTimeout 0. This is needed to get around
+    // some mobx errors.
+    const copy = this._loaders.slice()
+    setTimeout(() => { copy.forEach(fn => fn()) }, 0)
   }
 
   registerLoader(fn) {
