@@ -16,3 +16,9 @@ the data in the underlying array with the returned results.
 
 The collection object should behave the same as an array and it will 
 support all the methods that you would expect.
+
+#### Example
+```javascript
+const users = new Collection(() => api.loadUsers())
+users.map(users => user)
+```
