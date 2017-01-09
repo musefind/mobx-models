@@ -7,7 +7,7 @@ export const asReactiveLoader = (component) => {
   const base = observerComp.prototype.render
   const oldDidUpdate = observerComp.prototype.componentDidUpdate
   const oldDidMount = observerComp.prototype.componentDidMount 
-  var name = component.name || component.displayName
+  var name = component.name || component.displayName || getComponentName(component)
 
   if (!base) throw new Error("Render must exist on component");
   if (!name) throw new Error("Component name is required to load");
@@ -41,5 +41,9 @@ export const asReactiveLoader = (component) => {
   }
 
   return observerComp
+}
 
+const getComponentName = (component) => {
+  let result = /^function\s+([\w\$]+)\s*\(/.exec( func.toString() )
+  return  result  ?  result[ 1 ]  :  'Component' // for an anonymous function there won't be a match
 }
