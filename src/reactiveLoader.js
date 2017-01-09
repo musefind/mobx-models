@@ -9,6 +9,7 @@ export const asReactiveLoader = (component) => {
   const oldDidMount = observerComp.prototype.componentDidMount 
 
   if (!base) throw new Error("Render must exist on component");
+  if (!observerComp.name) throw new Error("Component name is required to load");
 
   observerComp.prototype.render = function () {
     LoadDispatch.beginListening(observerComp.name)
