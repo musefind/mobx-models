@@ -43,6 +43,6 @@ export const asReactiveLoader = (component) => {
 }
 
 const getComponentName = (component) => {
-  let result = /^function\s+([\w\$]+)\s*\(/.exec( func.toString() )
+  let result = /^function\s+([\w\$]+)\s*\(/.exec( component.toString() )
   return  result  ?  result[ 1 ]  :  'Component' // for an anonymous function there won't be a match
 }
