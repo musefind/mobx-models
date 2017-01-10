@@ -1,6 +1,6 @@
 {
   "name": "mobx-models",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "MobX Model Structure",
   "main": "index.js",
   "scripts": {
@@ -26,7 +26,8 @@
   "homepage": "https://github.com/musefind/mobx-models#readme",
   "peerDependencies": {
     "mobx": ">= 2.0.0",
-    "react": ">= 15.4.1"
+    "react": ">= 15.4.1",
+    "mobx-react": "^4.1.0"
   },
   "devDependencies": {
     "mobx": "^2.6.0",

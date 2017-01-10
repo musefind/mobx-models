@@ -1,33 +1,29 @@
 class LoadDispatch {
-  _loaders = []
+  _loaders = {}
   _listening = false
+  _currentComponent = undefined
 
-  callLoaders() {
-    this._loaders.forEach(fn => fn())
-  }
-
-  callLoadersAsync() {
-    // this is an 'async' version of call loaders, it sticks the function on
-    // the back of the queue by using setTimeout 0. This is needed to get around
-    // some mobx errors.
-    const copy = this._loaders.slice()
-    setTimeout(() => { copy.forEach(fn => fn()) }, 0)
+  callLoaders(component) {
+    this._loaders[component].forEach(fn => {
+      fn()
+    })
   }
 
   registerLoader(fn) {
     if (this._listening) {
-      this._loaders.push(fn)
+      this._loaders[this._currentComponent].push(fn)
     }
   }
 
-  beginListening() {
+  beginListening(component) {
+    this._currentComponent = component
     this._listening = true
-    this._loaders = []
+    this._loaders[component] = []
   }
 
   endListening() {
     this._listening = false
-    this._loaders = []
+    this._currentComponent = undefined
   }
 }
 
