@@ -86,6 +86,10 @@ export default class Collection extends Base {
     return this.results.find(fn)
   }
 
+  sort(fn) {
+    return this.results.sort(fn)
+  }
+
   push(obj) {
     return this.results.push(obj)
   }
