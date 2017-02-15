@@ -79,11 +79,11 @@ describe('Schema', () => {
 
 
     const res = parse(data, {
-      blogs: blogSchema.asArray(),
+      blogs: blogSchema,
     })
 
     // alternative api
-    const res2 = blogSchema.asArray().parse(data.blogs)
+    const res2 = blogSchema.parse(data.blogs)
     
     assert.equal(res[0].author.constructor.name, 'Author')
     assert(isObservable(res[0].author, 'id'))

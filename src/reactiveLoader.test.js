@@ -20,7 +20,7 @@ describe('reactiveLoader', () => {
     let WrappedComponent = asReactiveLoader(NewComponent)
     const component = new WrappedComponent()
     component.render()
-    
+    component.componentDidMount()
     
     assert(loaded)
   })
