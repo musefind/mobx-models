@@ -5,7 +5,5 @@ module.exports = {
   Schema: require('./Schema').default,
   ViewModel: require('./ViewModel').default,
   parse: require('./Schema').parse,
-  Singleton: require('./Singleton').default,
-  ReactiveLoaderComponent: require('./ReactiveLoaderComponent').default,
   LoadDispatch: require('./LoadDispatch').default
 }
