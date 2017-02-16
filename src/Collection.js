@@ -2,21 +2,25 @@ import { observable } from 'mobx'
 import Base from './Base'
 import LoadDispatch from './LoadDispatch'
 
-// Questions:
-// - storing results array, as list of ID's or as list of objects
-// - where to put collections
-// - subscriptions to updates
-//
-// Basic Usage:
-// - will autoload users based on the provided function.
-// ```
-// const users = new Collection(() => api.loadUsers())
-// users.map(users => user)
-// ```
+/**
+ * Collection is an observable array of values that is aware of it's loaded state. Collection implements all array
+ * methods.
+ *
+ * @extends Base
+ * @implements Array
+ *
+ * @example
+ * const users = new Collection(() => api.loadUsers())
+ * users.map(users => user)
+ */
 export default class Collection extends Base {
   _results = observable([])
   loader
 
+  /**
+   * Provide a loader function that returns a promise that resolve with the data that should exist in the collection.
+   * @param {Function<Promise>} loader
+   */
   constructor(loader) {
     super()
     

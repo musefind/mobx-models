@@ -5,10 +5,12 @@ export const State = {}
 const assign = Object.assign
 
 /**
- * Class Model extends Base
+ * Class Model.
+ * The model is the smallest piece of state, it should be used to represent a single object coming from the backend.
  * 
- * The model is the smallest piece of state.
+ * TODO: Implement LoadDispatch and reactive loading interface.
  * 
+ * @extends Base
  * @example
  * class Influencer extends Model {
  *   
@@ -44,7 +46,7 @@ export default class Model extends Base {
   /**
    * Initialize get's an instance of a model, ensuring to return the same instance if it already exists.
    * @param rawData
-   * @returns {*}
+   * @returns {Model}
    */
   static initialize(rawData) {
     // if this is a User model, it's instances will be a State.User[id]
@@ -69,7 +71,7 @@ export default class Model extends Base {
   /**
    * Initialize's the model and then calls load.
    * @param data
-   * @returns {*}
+   * @returns {Model}
    */
   static initializeAndLoad(data) {
     if (!data.id) 
@@ -82,7 +84,7 @@ export default class Model extends Base {
   /**
    * Process the data before initializing it.
    * @param raw
-   * @returns {*}
+   * @returns {Object}
    */
   static processData(raw) {
     return raw
@@ -109,7 +111,7 @@ export default class Model extends Base {
   /**
    * load will call retrieve and then setLoaded. Call force to ensure the model will reload.
    * @param force
-   * @returns {Promise.<TResult>}
+   * @returns {Promise}
    */
   load(force) {
     if (this.loaded && !force) Promise.resolve(this);

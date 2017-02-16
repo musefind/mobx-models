@@ -1,3 +1,6 @@
+/**
+ * @private
+ */
 class LoadDispatch {
   _loaders = {}
   _listening = false
