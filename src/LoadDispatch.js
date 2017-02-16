@@ -1,5 +1,22 @@
 /**
- * @private
+ * LoadDispatch is a load dispatcher, register your loaders with it and then call all of them later. It's only use is the
+ * asReactiveLoader currently.
+ * 
+ * @example
+ * class MyComponent {
+ *   componentDidMount() {
+ *     LoadDispatch.callLoaders(this.id)
+ *   }
+ *   
+ *   render() {
+ *     LoadDispatch.beginListening(this.id)
+ *     return (
+ *       <div>
+ *         {this.props.collection.map(...)}
+ *       </div>
+ *     )
+ *   }
+ * }
  */
 class LoadDispatch {
   _loaders = {}
