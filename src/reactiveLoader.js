@@ -9,7 +9,8 @@ import { observer } from 'mobx-react'
  * 
  * Reactive loading works by tracking which pieces of state were accessed during the rendering of a component. When a
  * piece of state is accessed, it should register itself with the LoadDispatch. The componentDidMount method is then
- * overridden to call all of the loader functions registered with the LoadDispatch during rendering.
+ * overridden to call all of the loader functions registered with the LoadDispatch during rendering. For an example of
+ * how this works, view the docs for LoadDispatch.
  *
  * @param component
  * @returns {Component}
