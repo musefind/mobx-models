@@ -13,7 +13,7 @@ files.forEach(function(fileName) {
     if (err) throw err;
     documentation.formats.md(res, {}, function(err, output) {
       if (err) throw err;
-      fs.writeFileSync('./docs/' + fileName + '.md', output);
+      fs.writeFileSync('./docs/api/' + fileName + '.md', output);
     });
   });
 });
