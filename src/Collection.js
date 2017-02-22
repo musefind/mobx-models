@@ -90,16 +90,16 @@ export default class Collection extends Base {
     return this.results.find(fn)
   }
 
+  findIndex(fn) {
+    return this.results.findIndex(fn)
+  }
+
   sort(fn) {
     return this.results.sort(fn)
   }
 
-  remove(obj) {
-    return this.results.splice(this.results.indexOf(obj), 1)
-  }
-
-  splice(index, howmany, item) {
-    return this.results.splice(index, howmany, item)
+  splice(index, howmany, addItem) {
+    return this.results.splice(index, howmany, addItem)
   }
 
   push(obj) {
