@@ -47,7 +47,7 @@ export default class Collection extends Base {
   }
 
   get length() {
-    return this._results.length
+    return this.results.length
   }
 
   empty() {
