@@ -50,7 +50,9 @@ export default class Model extends Base {
    */
   static initialize(rawData) {
     // Get the name. In Production, class names are uglified, so a className property is necessary (e.g. User.classname = "User")
-    const name = this.className || this.name
+    const name = this.className
+    if (!name) 
+      throw new Error("All classes must have a className property to avoid uglification errors. Source: " + this.name);
     // if this is a User model, it's instances will be a State.User[id]
     if (!State[name]) State[name] = {};
     // try and find the object
