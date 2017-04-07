@@ -30,7 +30,7 @@ export default class Collection extends Base {
       throw new Error(`Loader is not a function ${this.loader}`)
     }
   }
-
+  
   get loaded() {
     LoadDispatch.registerLoader(this.load.bind(this))
     return this._loaded.get()
