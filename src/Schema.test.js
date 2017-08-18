@@ -8,11 +8,12 @@ class Author extends Model {}
 
 const authorSchema = new Schema(Author)
 const blogSchema = new Schema(Blog, {
-  author: authorSchema,
+  author: authorSchema
 })
+Author.className = 'Author'
+Blog.className = 'Blog'
 
 describe('Schema', () => {
-  
   it('can parse a basic schema', () => {
     const data = {
       id: 1,
@@ -20,13 +21,12 @@ describe('Schema', () => {
       content: 'blog',
       author: {
         id: 1,
-        name: 'author',
+        name: 'author'
       }
     }
-    
-    
+
     const res = parse(data, blogSchema)
-    
+
     assert.equal(res.author.constructor.name, 'Author')
     assert(isObservable(res.author, 'id'))
   })
@@ -39,20 +39,19 @@ describe('Schema', () => {
         content: 'blog',
         author: {
           id: 1,
-          name: 'author',
+          name: 'author'
         }
       }
     }
 
-
     const res = parse(data, {
-      blog: blogSchema,
+      blog: blogSchema
     })
 
     assert.equal(res.author.constructor.name, 'Author')
     assert(isObservable(res.author, 'id'))
   })
-  
+
   it('can parse a list', () => {
     const data = {
       blogs: [
@@ -62,7 +61,7 @@ describe('Schema', () => {
           content: 'blog',
           author: {
             id: 1,
-            name: 'author',
+            name: 'author'
           }
         },
         {
@@ -71,20 +70,19 @@ describe('Schema', () => {
           content: 'blog',
           author: {
             id: 2,
-            name: 'author',
+            name: 'author'
           }
         }
       ]
     }
 
-
     const res = parse(data, {
-      blogs: blogSchema,
+      blogs: blogSchema
     })
 
     // alternative api
     const res2 = blogSchema.parse(data.blogs)
-    
+
     assert.equal(res[0].author.constructor.name, 'Author')
     assert(isObservable(res[0].author, 'id'))
     assert(res.length === 2)
@@ -101,13 +99,12 @@ describe('Schema', () => {
       content: 'blog',
       author: {
         id: 1,
-        name: 'author',
+        name: 'author'
       }
     }
-    
+
     const raw = blogSchema.parseRaw(data)
     assert.equal('Object', raw.constructor.name)
     assert.equal(raw.author.constructor.name, 'Author')
   })
-  
 })
