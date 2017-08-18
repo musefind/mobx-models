@@ -1,6 +1,6 @@
 {
   "name": "mobx-models",
-  "version": "0.3.4",
+  "version": "0.3.10",
   "description": "MobX Model Structure",
   "main": "index.js",
   "scripts": {
@@ -15,10 +15,7 @@
     "type": "git",
     "url": "git+ssh://git@github.com/musefind/mobx-models.git"
   },
-  "keywords": [
-    "MobX",
-    "State"
-  ],
+  "keywords": ["MobX", "State"],
   "author": "Colin Walker",
   "license": "ISC",
   "bugs": {

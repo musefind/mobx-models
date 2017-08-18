@@ -24,7 +24,7 @@ export const asReactiveLoader = (component) => {
 
   if (!base) throw new Error("Render must exist on component");
 
-  observerComp.prototype.render = function () {
+  function newRender() {
     if (!this._loaderID) {
       this._loaderID = name + Math.random().toFixed(5)
     }
@@ -38,19 +38,31 @@ export const asReactiveLoader = (component) => {
     return result
   }
 
-  observerComp.prototype.componentDidUpdate = function() {
+  function newDidUpdate() {
     if (oldDidUpdate) {
       oldDidUpdate.apply(this, arguments)
     }
     LoadDispatch.callLoaders(this._loaderID)
   }
 
-  observerComp.prototype.componentDidMount = function() {
+  function newDidMount() {
     if (oldDidMount) {
       oldDidMount.apply(this, arguments)
     }
     LoadDispatch.callLoaders(this._loaderID)
   }
+
+  Object.defineProperty(observerComp.prototype, 'componentDidUpdate', {
+    writable: false, configurable: true, enumerable: false,
+    value: newDidUpdate
+  })
+
+  Object.defineProperty(observerComp.prototype, 'componentDidMount', {
+    writable: false, configurable: true, enumerable: false,
+    value: newDidMount
+  })
+
+  observerComp.prototype.render = newRender
 
   return observerComp
 }

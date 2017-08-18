@@ -23,9 +23,9 @@ export default class Collection extends Base {
    */
   constructor(loader) {
     super()
-    
+
     this.loader = loader
-    
+
     if (typeof this.loader !== 'function') {
       throw new Error(`Loader is not a function ${this.loader}`)
     }
@@ -47,7 +47,7 @@ export default class Collection extends Base {
   }
 
   get length() {
-    return this._results.length
+    return this.results.length
   }
 
   empty() {
@@ -82,6 +82,10 @@ export default class Collection extends Base {
     return this.results.reduceRight()
   }
 
+  replace(arr) {
+    return this._results.replace(arr)
+  }
+
   filter(fn) {
     return this.results.filter(fn)
   }
@@ -108,26 +112,22 @@ export default class Collection extends Base {
 
   load(force) {
     return new Promise((resolve, reject) => {
-      
       // ensure we don't double load
       if (this.loading) {
         return resolve(this._results)
       }
-      
+
       if (this.loaded && !force) {
         return resolve(this._results)
       }
 
-
       this.setLoading()
-      this.loader()
-        .then(results => {
-          this._results.replace(results)
-          
-          this.setLoaded()
-          resolve(this._results)
-        })
+      this.loader().then(results => {
+        this._results.replace(results)
+
+        this.setLoaded()
+        resolve(this._results)
+      })
     })
   }
-
 }

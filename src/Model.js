@@ -49,10 +49,14 @@ export default class Model extends Base {
    * @returns {Model}
    */
   static initialize(rawData) {
+    // Get the name. In Production, class names are uglified, so a className property is necessary (e.g. User.classname = "User")
+    const name = this.className
+    if (!name) 
+      throw new Error("All classes must have a className property to avoid uglification errors. Source: " + this.name);
     // if this is a User model, it's instances will be a State.User[id]
-    if (!State[this.name]) State[this.name] = {};
+    if (!State[name]) State[name] = {};
     // try and find the object
-    let object = State[this.name][rawData.id]
+    let object = State[name][rawData.id]
     const data = this.processData(rawData)
     if (object && object.loading) {
       return object
@@ -60,7 +64,7 @@ export default class Model extends Base {
       assign(object, data)                                // update the object if it exists already
     } else if (data.id) {
       object = extendObservable(new this(data), data)     // create a new one
-      State[this.name][object.id] = object                // add it to the global state
+      State[name][object.id] = object                // add it to the global state
     } else {
       object = extendObservable(new this(data), data)     // create an 'untracked' model, won't be save in State cuz no ID.
     }
